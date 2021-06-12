@@ -263,6 +263,7 @@ public class Player : MonoBehaviour, IPushable
         fireHotbar.Highlight(false);
         waterHotbar.Highlight(false);
         windHotbar.Highlight(false);
+        vineHotbar.Highlight(false);
         earthHotbar.Highlight(false);
     }    
 
