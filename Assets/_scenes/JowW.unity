@@ -623,7 +623,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: cee0f3d723836fb45aff84dd2bc4b349, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -714,6 +714,8 @@ MonoBehaviour:
   indicators:
   - {fileID: 1566279138}
   - {fileID: 1646929882}
+  vineLinkPrefab: {fileID: 0}
+  vineTopPrefab: {fileID: 0}
 --- !u!114 &1133299062
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2383,8 +2385,8 @@ CapsuleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1, y: 2}
+  m_Offset: {x: -0.06, y: 0}
+  m_Size: {x: 0.85, y: 1.79}
   m_Direction: 0
 --- !u!50 &1852873207
 Rigidbody2D:

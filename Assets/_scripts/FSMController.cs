@@ -95,6 +95,9 @@ public class FSMController : MonoBehaviour
 
     private void AutomaticallyMoveToDestination()
     {
+        Vector2 direction = destination.Value - (Vector2)transform.position;
+        movement.Move(direction.normalized);
+
         if (Vector2.Distance((Vector2)transform.position, destination.Value) < 0.5f)
         {
             destination = null;
@@ -103,9 +106,6 @@ public class FSMController : MonoBehaviour
             ethereal.InvokePlayerArrival();
             return;
         }
-
-        Vector2 direction = destination.Value - (Vector2)transform.position;
-        movement.Move(direction.normalized);
     }
 
     private void MoveBasedOnInput()

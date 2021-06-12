@@ -103,27 +103,27 @@ public class Ethereal : MonoBehaviour
     {
         if (destination.HasValue)
         {
+            Vector2 direction = destination.Value - (Vector2)transform.position;
+            movement.Move(direction.normalized);
+
             if (Vector2.Distance((Vector2)transform.position, destination.Value) < 0.5f)
             {
                 Stop();
                 OnDestinationArrival?.Invoke();
                 return;
-            }
-
-            Vector2 direction = destination.Value - (Vector2)transform.position;
-            movement.Move(direction.normalized);
+            }            
         }
         else if (target != null)
         {
+            Vector2 direction = (Vector2)target.position - (Vector2)transform.position;
+            movement.Move(direction.normalized);
+
             if (Vector2.Distance((Vector2)transform.position, (Vector2)target.position) < 0.5f)
             {
                 Stop();
                 OnPlayerArrival?.Invoke();
                 return;
             }
-
-            Vector2 direction = (Vector2)target.position - (Vector2)transform.position;
-            movement.Move(direction.normalized);
         }
     }
 
@@ -131,8 +131,7 @@ public class Ethereal : MonoBehaviour
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
-            if (destination == null)
-                return;
+            if (destination == null) { return; }                
             Debug.Log("Moo");
             Stop();
             OnDestinationArrival?.Invoke();
