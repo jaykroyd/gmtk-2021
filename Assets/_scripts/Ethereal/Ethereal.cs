@@ -1,3 +1,4 @@
+using Elysium.Combat;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,13 +9,15 @@ public class Ethereal : MonoBehaviour
     [SerializeField] private float maxDistance = 5f;
 
     private Movement movement = default;
-    private Rigidbody2D rb = default;
+    private Rigidbody2D rb = default;    
+
     private Vector2? destination = null;
     private Transform target = null;
 
     private IEtherealEffect effect = default;
 
-    public string Name { get; private set; }
+    public SpriteRenderer Renderer { get; private set; }
+    public ModelController Anim { get; set; }
 
     public event UnityAction OnDestinationArrival;
     public event UnityAction OnPlayerArrival;
@@ -23,6 +26,8 @@ public class Ethereal : MonoBehaviour
     {
         movement = GetComponent<Movement>();
         rb = GetComponent<Rigidbody2D>();
+        Renderer = GetComponent<SpriteRenderer>();
+        Anim = GetComponent<ModelController>();
     }
 
     public bool IsActive()
@@ -32,7 +37,7 @@ public class Ethereal : MonoBehaviour
 
     public void Shoot(FSMController _controller, IEtherealEffect _effect)
     {
-        this.effect = _effect;
+        this.effect = _effect;             
         transform.position = _controller.transform.position;
 
         var worldPos = Utils.GetCurrentMousePosition();
@@ -40,8 +45,8 @@ public class Ethereal : MonoBehaviour
         Vector2 direction = worldPos - (Vector2)transform.position;
         destination = (Vector2)transform.position + (direction.normalized * maxDistance);
 
-        effect.OnShoot();
         Activate();
+        effect.OnShoot();
     }
 
     public void Drop(FSMController _controller, IEtherealEffect _effect)
@@ -49,8 +54,8 @@ public class Ethereal : MonoBehaviour
         this.effect = _effect;
         transform.position = _controller.transform.position;
 
-        effect.OnDrop();
         Activate();
+        effect.OnDrop();        
     }
 
     public void Pull(FSMController _controller)

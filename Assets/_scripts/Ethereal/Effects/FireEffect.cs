@@ -12,18 +12,20 @@ public class FireEffect : IEtherealEffect, IDamageDealer
 
     private float tickDamageMultiplier = 1f;
     private float collisionDamageMultiplier = 10f;
+    private Color color = default;
 
     public RefValue<int> Damage { get; set; } = new RefValue<int>(() => 1);
 
     public DamageTeam[] DealsDamageToTeams => new DamageTeam[] { DamageTeam.ENEMY };
     public GameObject DamageDealerObject => controller.gameObject;
 
-    public FireEffect(FSMController _controller, Ethereal _ethereal, float _collisionDamage, float _tickDamage)
+    public FireEffect(FSMController _controller, Ethereal _ethereal, Color _color, float _collisionDamage, float _tickDamage)
     {
         this.collisionDamageMultiplier = _collisionDamage;
         this.tickDamageMultiplier = _tickDamage;
         controller = _controller;
         ethereal = _ethereal;
+        this.color = _color;
     }
 
     public void CriticalHit()
@@ -33,7 +35,8 @@ public class FireEffect : IEtherealEffect, IDamageDealer
 
     public void OnActivate()
     {
-        
+        color.a = 0.3f;
+        ethereal.Renderer.color = color;
     }
 
     public void OnCollide(Collider _collider)
@@ -67,8 +70,8 @@ public class FireEffect : IEtherealEffect, IDamageDealer
     }
 
     public void OnShoot()
-    {        
-
+    {
+        ethereal.Anim.PlayAnimation("Attack");
     }
 
     private void TryDealDamage(Collider _collider, float _multiplier)

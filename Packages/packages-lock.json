@@ -16,14 +16,14 @@
       "dependencies": {
         "com.elysium.core": "1.0.0"
       },
-      "hash": "e169f124f923db16a5f7db79fc8995275f02efd8"
+      "hash": "af0ea0b316779fd4908ee598d66caad3560daab9"
     },
     "com.elysium.core": {
       "version": "https://github.com/byyjoww/Elysium.Core.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "f51275bc8ee6c3370b8ac1d2053859670b8dca18"
+      "hash": "e1f63a13bd653bd1f0060faf772658617656603a"
     },
     "com.elysium.ui": {
       "version": "https://github.com/byyjoww/Elysium.UI.git",

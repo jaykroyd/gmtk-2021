@@ -1,3 +1,4 @@
+using Elysium.Combat;
 using Elysium.Utils.Attributes;
 using System;
 using System.Collections;
@@ -26,16 +27,19 @@ public class FSMController : MonoBehaviour
 
     private IEtherealEffect selectedEffect = null;
 
+    public ModelController Anim { get; set; }
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         canvas = FindObjectOfType<Canvas>();
         movement = GetComponent<Movement>();
+        Anim = GetComponent<ModelController>();
 
-        fireEffect = new FireEffect(this, ethereal, 10f, 1f);
-        waterEffect = new FireEffect(this, ethereal, 10f, 1f);
-        windEffect = new FireEffect(this, ethereal, 10f, 1f);
-        earthEffect = new FireEffect(this, ethereal, 10f, 1f);
+        fireEffect = new FireEffect(this, ethereal, Color.red, 10f, 1f);
+        waterEffect = new FireEffect(this, ethereal, Color.blue, 10f, 1f);
+        windEffect = new FireEffect(this, ethereal, Color.yellow, 10f, 1f);
+        earthEffect = new FireEffect(this, ethereal, Color.green, 10f, 1f);
     }
 
     protected virtual void Start()
