@@ -13,7 +13,7 @@ public class FireEffect : BaseEffect, IDamageDealer
     private GameObject hitExplosionEffect = default;
     private GameObject tickExplosionEffect = default;
 
-    public FireEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, float _collisionDamage, float _tickDamage, GameObject _hitExplosionEffect, GameObject _tickExplosionEffect) : base(_controller, _ethereal, _mainColor, _linkColor)
+    public FireEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, int _modelIndex, float _collisionDamage, float _tickDamage, GameObject _hitExplosionEffect, GameObject _tickExplosionEffect) : base(_controller, _ethereal, _mainColor, _linkColor, _modelIndex)
     {
         this.collisionDamageMultiplier = _collisionDamage;
         this.tickDamageMultiplier = _tickDamage;
@@ -34,9 +34,7 @@ public class FireEffect : BaseEffect, IDamageDealer
 
     public override void OnActivate()
     {
-        mainColor.a = 0.3f;
-        ethereal.Renderer.color = mainColor;
-        ethereal.Link.SetColor(linkColor);
+        base.OnActivate();
     }
 
     public override void OnCollide(Collider2D _collider)

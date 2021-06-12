@@ -10,15 +10,22 @@ public abstract class BaseEffect : IEtherealEffect
     protected Color mainColor = default;
     protected Color linkColor = default;
 
-    public BaseEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor)
+    protected int modelIndex = default;
+
+    public BaseEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, int _modelIndex)
     {
         controller = _controller;
         ethereal = _ethereal;
         this.mainColor = _mainColor;
         this.linkColor = _linkColor;
+        this.modelIndex = _modelIndex;
     }
 
-    public abstract void OnActivate();
+    public virtual void OnActivate()
+    {
+        ethereal.SetModel(modelIndex);
+        ethereal.Link.SetColor(linkColor);
+    }
 
     public abstract void OnCollide(Collider2D _collider);
 

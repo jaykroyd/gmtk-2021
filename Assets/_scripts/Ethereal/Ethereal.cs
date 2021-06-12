@@ -7,6 +7,7 @@ using UnityEngine.Events;
 public class Ethereal : MonoBehaviour
 {
     [SerializeField] private float maxDistance = 5f;
+    [SerializeField] private ModelController[] models = new ModelController[4];
 
     private Movement movement = default;
     private Rigidbody2D rb = default;
@@ -32,7 +33,6 @@ public class Ethereal : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         Renderer = GetComponent<SpriteRenderer>();
         Link = GetComponentInChildren<SpectralLink>();
-        Anim = GetComponent<ModelController>();
         player = FindObjectOfType<Player>();
     }
 
@@ -183,6 +183,18 @@ public class Ethereal : MonoBehaviour
         destination = null;
         target = null;
         rb.velocity = Vector2.zero;        
+    }
+
+    public void SetModel(int _index)
+    {
+        if (_index >= models.Length) 
+        {
+            Debug.LogError("index out of bounds of array");
+            return; 
+        }
+
+        models[_index].gameObject.SetActive(true);
+        Anim = models[_index];
     }
 
     public void InvokePlayerArrival()

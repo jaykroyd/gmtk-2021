@@ -9,7 +9,7 @@ public class VineEffect : BaseEffect
     GameObject vineTopPrefab = null;
     GameObject[] objs = null;
 
-    public VineEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, GameObject _vineLinkPrefab, GameObject _vineTopPrefab) : base(_controller, _ethereal, _mainColor, _linkColor)
+    public VineEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, int _modelIndex, GameObject _vineLinkPrefab, GameObject _vineTopPrefab) : base(_controller, _ethereal, _mainColor, _linkColor, _modelIndex)
     {
         vineLinkPrefab = _vineLinkPrefab;
         vineTopPrefab = _vineTopPrefab;
@@ -42,9 +42,7 @@ public class VineEffect : BaseEffect
 
     public override void OnActivate()
     {
-        mainColor.a = 0.3f;
-        ethereal.Renderer.color = mainColor;
-        ethereal.Link.SetColor(linkColor);
+        base.OnActivate();
     }
 
     public override void OnDeactivate()

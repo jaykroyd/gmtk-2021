@@ -10,7 +10,7 @@ public class WindEffect : BaseEffect
     private float pushbackRange = 4f;
     private float pushbackForce = 1f;
 
-    public WindEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, float _gravityScale, float _pushbackRange, float _pushbackForce) : base(_controller, _ethereal, _mainColor, _linkColor)
+    public WindEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, int _modelIndex, float _gravityScale, float _pushbackRange, float _pushbackForce) : base(_controller, _ethereal, _mainColor, _linkColor, _modelIndex)
     {
         this.gravityScale = _gravityScale;
         this.pushbackRange = _pushbackRange;
@@ -19,9 +19,7 @@ public class WindEffect : BaseEffect
 
     public override void OnActivate()
     {
-        mainColor.a = 0.3f;
-        ethereal.Renderer.color = mainColor;
-        ethereal.Link.SetColor(linkColor);
+        base.OnActivate();
 
         prevGravityScale = controller.Rigidbody.gravityScale;
         controller.Rigidbody.gravityScale = gravityScale;

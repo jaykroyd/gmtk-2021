@@ -28,6 +28,12 @@ public class Player : MonoBehaviour, IPushable
     private IEtherealEffect windEffect = null;
     private IEtherealEffect earthEffect = null;
 
+    [Separator("Hotbar", true)]
+    [SerializeField] UI_HotbarSlot fireHotbar = null;
+    [SerializeField] UI_HotbarSlot waterHotbar = null;
+    [SerializeField] UI_HotbarSlot windHotbar = null;
+    [SerializeField] UI_HotbarSlot earthHotbar = null;
+
     [Separator("Fire Effect", true)]
     [SerializeField] GameObject fireExplosionHit = null;
     [SerializeField] GameObject fireExplosionTick = null;
@@ -41,18 +47,26 @@ public class Player : MonoBehaviour, IPushable
     public ModelController Anim { get; set; }
     public Rigidbody2D Rigidbody => rb;
 
+    public void Push(float _force, Vector2 _direction)
+    {
+        Debug.DrawRay(transform.position, _direction * _force, Color.red);
+        Debug.LogError("pushed");
+        rb.velocity = Vector2.zero;
+        rb.AddForce(_direction * _force);
+    }
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         canvas = FindObjectOfType<Canvas>();
         movement = GetComponent<Movement>();
         healthController = GetComponent<HealthController>();
-        Anim = GetComponent<ModelController>();
+        Anim = GetComponentInChildren<ModelController>();
 
-        fireEffect = new FireEffect(this, ethereal, Color.red, Color.red, 10f, 1f, fireExplosionHit, fireExplosionTick);
-        waterEffect = new FireEffect(this, ethereal, Color.blue, Color.blue, 10f, 1f, fireExplosionHit, fireExplosionTick);
-        windEffect = new WindEffect(this, ethereal, Color.yellow, Color.yellow, 0f, 5f, 200f);
-        earthEffect = new VineEffect(this, ethereal, Color.green, Color.green, vineLinkPrefab, vineTopPrefab);
+        fireEffect = new FireEffect(this, ethereal, Color.red, Color.red, 0, 10f, 1f, fireExplosionHit, fireExplosionTick);
+        waterEffect = new FireEffect(this, ethereal, Color.blue, Color.blue, 1, 10f, 1f, fireExplosionHit, fireExplosionTick);
+        windEffect = new WindEffect(this, ethereal, Color.yellow, Color.yellow, 2, 0f, 5f, 200f);
+        earthEffect = new VineEffect(this, ethereal, Color.green, Color.green, 3, vineLinkPrefab, vineTopPrefab);
 
         healthController.MaxResource = new Elysium.Utils.RefValue<int>(() => health);
         healthController.Fill();
@@ -84,24 +98,32 @@ public class Player : MonoBehaviour, IPushable
         if (!ethereal.IsActive && Input.GetKeyDown(KeyCode.Alpha1))
         { 
             selectedEffect = fireEffect;
+            DeactivateAllHotbars();
+            fireHotbar.Highlight(true);
             isAiming = true;
         }
 
         if (!ethereal.IsActive && Input.GetKeyDown(KeyCode.Alpha2)) 
         { 
             selectedEffect = waterEffect;
+            DeactivateAllHotbars();
+            waterHotbar.Highlight(true);
             isAiming = true;
         }
 
         if (!ethereal.IsActive && Input.GetKeyDown(KeyCode.Alpha3))
         { 
             selectedEffect = windEffect;
+            DeactivateAllHotbars();
+            windHotbar.Highlight(true);
             isAiming = true;
         }
 
         if (!ethereal.IsActive && Input.GetKeyDown(KeyCode.Alpha4)) 
         { 
             selectedEffect = earthEffect;
+            DeactivateAllHotbars();
+            earthHotbar.Highlight(true);
             isAiming = true;
         }
     }
@@ -142,12 +164,14 @@ public class Player : MonoBehaviour, IPushable
     {
         ethereal.Shoot(this, selectedEffect);
         isAiming = false;
+        DeactivateAllHotbars();
     }
 
     private void DropEthereal()
     {
         ethereal.Drop(this, selectedEffect);
         isAiming = false;
+        DeactivateAllHotbars();
     }
 
     private void PullEthereal()
@@ -171,12 +195,12 @@ public class Player : MonoBehaviour, IPushable
         }
     }
 
-    public void Push(float _force, Vector2 _direction)
+    private void DeactivateAllHotbars()
     {
-        Debug.DrawRay(transform.position, _direction * _force, Color.red);
-        Debug.LogError("pushed");
-        rb.velocity = Vector2.zero;
-        rb.AddForce(_direction * _force);
+        fireHotbar.Highlight(false);
+        waterHotbar.Highlight(false);
+        windHotbar.Highlight(false);
+        earthHotbar.Highlight(false);
     }
 
     private void OnCollisionEnter2D(Collision2D _collision)
