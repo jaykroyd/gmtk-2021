@@ -69,6 +69,7 @@ public class Ethereal : MonoBehaviour
     private void Activate()
     {
         this.gameObject.SetActive(true);
+        Link.gameObject.SetActive(true);
         effect.OnActivate();
     }
 
@@ -76,6 +77,7 @@ public class Ethereal : MonoBehaviour
     {
         IsDeployed = false;
         this.gameObject.SetActive(false);
+        Link.gameObject.SetActive(false);
         effect.OnDeactivate();
     }    
 
