@@ -4,21 +4,26 @@ using UnityEngine;
 
 public class VineEffect : MonoBehaviour, IEtherealEffect
 {
+    FSMController controller;
+    Ethereal ethereal;
+    Color color;
+
     const float DISTANCE_BETWEEN_LINKS = 0.3f;
     GameObject vineLinkPrefab = null;
     GameObject vineTopPrefab = null;
     GameObject[] objs = null;
 
-    Transform controller;
-    public VineEffect(FSMController _controller)
+    public VineEffect(FSMController _controller, Ethereal _ethereal, Color _color)
     {
-        controller = _controller.transform;
+        controller = _controller;
+        ethereal = _ethereal;
+        this.color = _color;
     }
 
     public void OnCollide(Collider _collider)
     {
-        Vector2 startPosition = (Vector2)this.transform.position;
-        Vector2 endPosition = (Vector2)controller.position;
+        Vector2 startPosition = (Vector2)ethereal.transform.position;
+        Vector2 endPosition = (Vector2)controller.transform.position;
 
         Vector2 direction = (endPosition - startPosition).normalized;
 
@@ -41,6 +46,8 @@ public class VineEffect : MonoBehaviour, IEtherealEffect
 
     public void OnActivate()
     {
+        color.a = 0.3f;
+        ethereal.Renderer.color = color;
     }
 
     public void OnDeactivate()
@@ -50,6 +57,11 @@ public class VineEffect : MonoBehaviour, IEtherealEffect
             Destroy(objs[i]);
         }
         objs = null;
+    }
+
+    public void OnReachDestination()
+    {
+        ethereal.Pull(controller);
     }
 
     public void OnDrop()
