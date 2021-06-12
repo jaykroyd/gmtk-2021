@@ -47,8 +47,6 @@ public class Player : MonoBehaviour, IPushable
     [SerializeField] GameObject healEffectTick = null;
 
     [Separator("Vine Effect", true)]
-    [SerializeField] GameObject vineLinkPrefab = null;
-    [SerializeField] GameObject vineTopPrefab = null;
 
     private IEtherealEffect selectedEffect = null;
 
@@ -130,9 +128,7 @@ public class Player : MonoBehaviour, IPushable
             Color.green, 
             Color.green, 
             3,
-            Ethereal.BASE_TIME_IN_FORM,
-            vineLinkPrefab, 
-            vineTopPrefab
+            Ethereal.BASE_TIME_IN_FORM
             );
 
         healthController.MaxResource = new Elysium.Utils.RefValue<int>(() => health);
