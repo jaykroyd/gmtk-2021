@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class VineEffect : BaseEffect
 {
-    bool isAttached = false;
+    protected bool isAttached = false;
 
     [SerializeField] float MaxDistance = 10f;
     [SerializeField] float ForceMultiplier = 100000f;
@@ -12,7 +12,7 @@ public class VineEffect : BaseEffect
 
     Rigidbody2D rb;
 
-    public VineEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, int _modelIndex, float _timeInForm, GameObject _vineLinkPrefab, GameObject _vineTopPrefab) : base(_controller, _ethereal, _mainColor, _linkColor, _modelIndex, _timeInForm)
+    public VineEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, int _modelIndex, float _timeInForm) : base(_controller, _ethereal, _mainColor, _linkColor, _modelIndex, _timeInForm)
     {
         rb = _controller.GetComponent<Rigidbody2D>();
     }
