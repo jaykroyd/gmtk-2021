@@ -30,10 +30,8 @@ public class Ethereal : MonoBehaviour
         Anim = GetComponent<ModelController>();
     }
 
-    public bool IsActive()
-    {
-        return gameObject.activeSelf;
-    }
+    public bool IsActive => gameObject.activeSelf;
+    public bool IsDeployed { get; set; }
 
     public void Shoot(FSMController _controller, IEtherealEffect _effect)
     {
@@ -47,6 +45,14 @@ public class Ethereal : MonoBehaviour
 
         Activate();
         effect.OnShoot();
+
+        void OnArriveAtDestination() 
+        {
+            IsDeployed = true;
+            OnDestinationArrival -= OnArriveAtDestination;            
+        }
+
+        OnDestinationArrival += OnArriveAtDestination;
     }
 
     public void Drop(FSMController _controller, IEtherealEffect _effect)
@@ -55,13 +61,14 @@ public class Ethereal : MonoBehaviour
         transform.position = _controller.transform.position;
 
         Activate();
-        effect.OnDrop();        
+        effect.OnDrop();
+        IsDeployed = true;
     }
 
     public void Pull(FSMController _controller)
     {
         target = _controller.transform;
-        effect.OnPull();   
+        effect.OnPull();
         OnPlayerArrival += DeactivateOnArrival;
     }
 
@@ -79,6 +86,7 @@ public class Ethereal : MonoBehaviour
 
     public void Deactivate()
     {
+        IsDeployed = false;
         this.gameObject.SetActive(false);
         effect.OnDeactivate();
     }
@@ -127,10 +135,14 @@ public class Ethereal : MonoBehaviour
 
     private void Stop()
     {
-        Debug.Log("arrived at destination");
         destination = null;
         target = null;
         rb.velocity = Vector2.zero;        
+    }
+
+    public void InvokePlayerArrival()
+    {
+        OnPlayerArrival?.Invoke();
     }
 
     private void OnDrawGizmos()
