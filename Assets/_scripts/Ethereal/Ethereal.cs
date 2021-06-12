@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Ethereal : MonoBehaviour
 {
@@ -14,6 +15,9 @@ public class Ethereal : MonoBehaviour
     private IEtherealEffect effect = default;
 
     public string Name { get; private set; }
+
+    public event UnityAction OnDestinationArrival;
+    public event UnityAction OnPlayerArrival;
 
     public void Awake()
     {
@@ -29,6 +33,8 @@ public class Ethereal : MonoBehaviour
     public void Shoot(FSMController _controller, IEtherealEffect _effect)
     {
         this.effect = _effect;
+        transform.position = _controller.transform.position;
+
         var worldPos = Utils.GetCurrentMousePosition();
         worldPos = new Vector3(worldPos.x, worldPos.y, 0);
         Vector2 direction = worldPos - (Vector2)transform.position;
@@ -50,15 +56,14 @@ public class Ethereal : MonoBehaviour
     public void Pull(FSMController _controller)
     {
         target = _controller.transform;
-
-        effect.OnPull();
-        Deactivate();
+        effect.OnPull();   
+        OnPlayerArrival += DeactivateOnArrival;
     }
 
     public void Goto(FSMController _controller)
     {
         effect.OnGoto();
-        Deactivate();
+        OnPlayerArrival += DeactivateOnArrival;
     }
 
     private void Activate()
@@ -73,13 +78,20 @@ public class Ethereal : MonoBehaviour
         effect.OnDeactivate();
     }
 
-    public void Update()
+    private void DeactivateOnArrival()
+    {
+        OnPlayerArrival -= DeactivateOnArrival;
+        Deactivate();        
+    }
+
+    private void Update()
     {
         if (destination.HasValue)
         {
             if (Vector2.Distance((Vector2)transform.position, destination.Value) < 0.5f)
             {
                 Stop();
+                OnDestinationArrival?.Invoke();
                 return;
             }
 
@@ -91,7 +103,7 @@ public class Ethereal : MonoBehaviour
             if (Vector2.Distance((Vector2)transform.position, (Vector2)target.position) < 0.5f)
             {
                 Stop();
-                gameObject.SetActive(false);
+                OnPlayerArrival?.Invoke();
                 return;
             }
 
@@ -113,7 +125,7 @@ public class Ethereal : MonoBehaviour
         Debug.Log("arrived at destination");
         destination = null;
         target = null;
-        rb.velocity = Vector2.zero;
+        rb.velocity = Vector2.zero;        
     }
 
     private void OnDrawGizmos()

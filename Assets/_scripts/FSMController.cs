@@ -49,20 +49,40 @@ public class FSMController : MonoBehaviour
         else { MoveBasedOnInput(); }
 
         DrawChangeStateUI(isAiming);
-        if (isAiming && Input.GetMouseButtonDown(0)) { ShootEthereal(); }
-
-        // Shoot or jump to ethereal
-        if (Input.GetKeyDown(KeyCode.E))
+        if (selectedEffect != null && Input.GetMouseButtonDown(0)) 
         {
-            if (ethereal.IsActive()) { GoToEthereal(); }
-            else { isAiming = !isAiming; }
+            if (isAiming) { ShootEthereal(); }
+            else { GoToEthereal(); }
+        }
+        
+        if (selectedEffect != null && Input.GetMouseButtonDown(1)) 
+        {
+            if (isAiming) { DropEthereal(); }
+            else { PullEthereal();  }
         }
 
-        // Drop or pull ethereal
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            if (ethereal.gameObject.activeSelf) { PullEthereal(); }
-            else { DropEthereal(); }
+        if (!ethereal.IsActive() && Input.GetKeyDown(KeyCode.Alpha1))
+        { 
+            selectedEffect = fireEffect;
+            isAiming = true;
+        }
+
+        if (!ethereal.IsActive() && Input.GetKeyDown(KeyCode.Alpha2)) 
+        { 
+            selectedEffect = waterEffect;
+            isAiming = true;
+        }
+
+        if (!ethereal.IsActive() && Input.GetKeyDown(KeyCode.Alpha3))
+        { 
+            selectedEffect = windEffect;
+            isAiming = true;
+        }
+
+        if (!ethereal.IsActive() && Input.GetKeyDown(KeyCode.Alpha4)) 
+        { 
+            selectedEffect = earthEffect;
+            isAiming = true;
         }
     }
 
@@ -105,6 +125,7 @@ public class FSMController : MonoBehaviour
     private void DropEthereal()
     {
         ethereal.Drop(this, selectedEffect);
+        isAiming = false;
     }
 
     private void PullEthereal()
