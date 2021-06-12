@@ -2,27 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VineEffect : IEtherealEffect
+public class VineEffect : BaseEffect, IEtherealEffect
 {
-    FSMController controller;
-    Ethereal ethereal;
-    Color color;
-
     const float DISTANCE_BETWEEN_LINKS = 0.3f;
     GameObject vineLinkPrefab = null;
     GameObject vineTopPrefab = null;
     GameObject[] objs = null;
 
-    public VineEffect(FSMController _controller, Ethereal _ethereal, Color _color, GameObject _vineLinkPrefab, GameObject _vineTopPrefab)
+    public VineEffect(FSMController _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, GameObject _vineLinkPrefab, GameObject _vineTopPrefab) : base(_controller, _ethereal, _mainColor, _linkColor)
     {
-        controller = _controller;
-        ethereal = _ethereal;
-        this.color = _color;
         vineLinkPrefab = _vineLinkPrefab;
         vineTopPrefab = _vineTopPrefab;
 }
 
-    public void OnCollide(Collider _collider)
+    public override void OnCollide(Collider _collider)
     {
         Vector2 startPosition = (Vector2)ethereal.transform.position;
         Vector2 endPosition = (Vector2)controller.transform.position;
@@ -42,17 +35,18 @@ public class VineEffect : IEtherealEffect
         }
     }
 
-    public void OnLinkCollideTick(Collider _collider)
+    public override void OnLinkCollideTick(Collider _collider)
     {
     }
 
-    public void OnActivate()
+    public override void OnActivate()
     {
-        color.a = 0.3f;
-        ethereal.Renderer.color = color;
+        mainColor.a = 0.3f;
+        ethereal.Renderer.color = mainColor;
+        ethereal.Link.SetColor(linkColor);
     }
 
-    public void OnDeactivate()
+    public override void OnDeactivate()
     {
         if (objs == null)
             return;
@@ -69,19 +63,19 @@ public class VineEffect : IEtherealEffect
         ethereal.Pull(controller);
     }
 
-    public void OnDrop()
+    public override void OnDrop()
     {
     }
 
-    public void OnGoto()
+    public override void OnGoto()
     {
     }
 
-    public void OnPull()
+    public override void OnPull()
     {
     }
 
-    public void OnShoot()
+    public override void OnShoot()
     {
     }
 
