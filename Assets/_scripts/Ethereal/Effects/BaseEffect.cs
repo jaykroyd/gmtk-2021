@@ -1,3 +1,4 @@
+using Elysium.Utils.Timers;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,17 +12,22 @@ public abstract class BaseEffect : IEtherealEffect
     protected Color mainColor = default;
     protected Color linkColor = default;
 
+    protected TimerInstance timer = default;    
+
     protected int modelIndex = default;
 
     public event UnityAction OnShootEnd;
 
-    public BaseEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, int _modelIndex)
+    protected virtual float maxDurationInSpiritForm { get; set; } = 5f;
+
+    public BaseEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, int _modelIndex, float _timeInForm)
     {
         controller = _controller;
         ethereal = _ethereal;
         this.mainColor = _mainColor;
         this.linkColor = _linkColor;
         this.modelIndex = _modelIndex;
+        this.maxDurationInSpiritForm = _timeInForm;
     }
 
     public virtual void OnActivate()
@@ -29,10 +35,14 @@ public abstract class BaseEffect : IEtherealEffect
         ethereal.SetModel(modelIndex);
         ethereal.Link.SetColor(linkColor);
         controller.SetParticles(modelIndex);
+        timer = Timer.CreateTimer(maxDurationInSpiritForm, () => !ethereal, false);
+        timer.OnEnd += RetrieveStart;
     }
     public virtual void OnDeactivate()
     {
         controller.SetParticles(-1);
+        timer.EndSilent();        
+        timer.Dispose();
     }
 
     public abstract void OnCollide(Collider2D _collider);

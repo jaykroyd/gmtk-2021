@@ -10,7 +10,7 @@ public class WindEffect : BaseEffect
     private float pushbackRange = 4f;
     private float pushbackForce = 1f;
 
-    public WindEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, int _modelIndex, float _gravityScale, float _pushbackRange, float _pushbackForce) : base(_controller, _ethereal, _mainColor, _linkColor, _modelIndex)
+    public WindEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, int _modelIndex, float _timeInForm, float _gravityScale, float _pushbackRange, float _pushbackForce) : base(_controller, _ethereal, _mainColor, _linkColor, _modelIndex, _timeInForm)
     {
         this.gravityScale = _gravityScale;
         this.pushbackRange = _pushbackRange;

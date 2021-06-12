@@ -13,7 +13,7 @@ public class FireEffect : BaseEffect, IDamageDealer
     private GameObject hitExplosionEffect = default;
     private GameObject tickExplosionEffect = default;
 
-    public FireEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, int _modelIndex, float _collisionDamage, float _tickDamage, GameObject _hitExplosionEffect, GameObject _tickExplosionEffect) : base(_controller, _ethereal, _mainColor, _linkColor, _modelIndex)
+    public FireEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, int _modelIndex, float _timeInForm, float _collisionDamage, float _tickDamage, GameObject _hitExplosionEffect, GameObject _tickExplosionEffect) : base(_controller, _ethereal, _mainColor, _linkColor, _modelIndex, _timeInForm)
     {
         this.collisionDamageMultiplier = _collisionDamage;
         this.tickDamageMultiplier = _tickDamage;

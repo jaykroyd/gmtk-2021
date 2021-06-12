@@ -6,6 +6,8 @@ using UnityEngine.Events;
 
 public class Ethereal : MonoBehaviour
 {
+    public const float BASE_TIME_IN_FORM = 5f;
+
     [SerializeField] private float maxDistance = 5f;
     [SerializeField] private ModelController[] models = new ModelController[4];
 

@@ -54,7 +54,6 @@ public class Player : MonoBehaviour, IPushable
     public void Push(float _force, Vector2 _direction)
     {
         Debug.DrawRay(transform.position, _direction * _force, Color.red);
-        Debug.LogError("pushed");
         rb.velocity = Vector2.zero;
         rb.AddForce(_direction * _force);
     }
@@ -75,10 +74,54 @@ public class Player : MonoBehaviour, IPushable
         healthController = GetComponent<HealthController>();
         Anim = GetComponentInChildren<ModelController>();
 
-        fireEffect = new FireEffect(this, ethereal, Color.red, Color.red, 0, 10f, 1f, fireExplosionHit, fireExplosionTick);
-        waterEffect = new FireEffect(this, ethereal, Color.blue, Color.blue, 1, 10f, 1f, fireExplosionHit, fireExplosionTick);
-        windEffect = new WindEffect(this, ethereal, Color.white, Color.white, 2, 0f, 5f, 200f);
-        earthEffect = new VineEffect(this, ethereal, Color.green, Color.green, 3, vineLinkPrefab, vineTopPrefab);
+        fireEffect = new FireEffect(
+            this,
+            ethereal, 
+            Color.red, 
+            Color.red, 
+            0,
+            Ethereal.BASE_TIME_IN_FORM,
+            10f, 
+            1f, 
+            fireExplosionHit, 
+            fireExplosionTick
+            );
+
+        waterEffect = new FireEffect(
+            this, 
+            ethereal, 
+            Color.blue, 
+            Color.blue, 
+            1,
+            Ethereal.BASE_TIME_IN_FORM,
+            10f, 
+            1f, 
+            fireExplosionHit, 
+            fireExplosionTick
+            );
+
+        windEffect = new WindEffect(
+            this, 
+            ethereal, 
+            Color.white, 
+            Color.white, 
+            2,
+            Ethereal.BASE_TIME_IN_FORM,
+            0f, 
+            5f,
+            200f
+            );
+        
+        earthEffect = new VineEffect(
+            this, 
+            ethereal, 
+            Color.green, 
+            Color.green, 
+            3,
+            Ethereal.BASE_TIME_IN_FORM,
+            vineLinkPrefab, 
+            vineTopPrefab
+            );
 
         healthController.MaxResource = new Elysium.Utils.RefValue<int>(() => health);
         healthController.Fill();
