@@ -133,15 +133,13 @@ public class Player : MonoBehaviour, IPushable
             Ethereal.BASE_TIME_IN_FORM
             );
 
-        earthEffect = new VineEffect(
+        earthEffect = new EarthEffect(
             this,
             ethereal,
             Color.gray,
             Color.gray,
             4,
-            Ethereal.BASE_TIME_IN_FORM,
-            vineLinkPrefab,
-            vineTopPrefab
+            Ethereal.BASE_TIME_IN_FORM
             );
 
         healthController.MaxResource = new Elysium.Utils.RefValue<int>(() => health);
