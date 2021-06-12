@@ -269,18 +269,21 @@ public class Player : MonoBehaviour, IPushable
 
     private void OnCollisionEnter2D(Collision2D _collision)
     {
-        if (Destination.HasValue && _collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
-        {            
-            Destination = null;
-            ethereal.ForceRetrieve(this);
-        }
-
         if (_collision.collider.TryGetComponent(out IDamageDealer _dealer))
         {
             Vector2 direction = (Vector2)ethereal.transform.position - (Vector2)_collision.collider.transform.position;
             healthController.TakeDamage(_dealer, _dealer.Damage.Value);
             Push(enemyPushForce, direction.normalized);
             Anim.PlayAnimation("Hit");
+        }
+    }
+
+    private void OnCollisionStay2D(Collision2D _collision)
+    {
+        if (Destination.HasValue && _collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            Destination = null;
+            ethereal.ForceRetrieve(this);
         }
     }
 }
