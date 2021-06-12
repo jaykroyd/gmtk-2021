@@ -7,7 +7,8 @@ using UnityEngine;
 
 public class FireEffect : IEtherealEffect, IDamageDealer
 {
-    private GameObject damageDealerObject;
+    private Ethereal ethereal = default;
+    private FSMController controller = default;
 
     private float tickDamageMultiplier = 1f;
     private float collisionDamageMultiplier = 10f;
@@ -15,13 +16,14 @@ public class FireEffect : IEtherealEffect, IDamageDealer
     public RefValue<int> Damage { get; set; } = new RefValue<int>(() => 1);
 
     public DamageTeam[] DealsDamageToTeams => new DamageTeam[] { DamageTeam.ENEMY };
-    public GameObject DamageDealerObject => damageDealerObject;
+    public GameObject DamageDealerObject => controller.gameObject;
 
-    public FireEffect(FSMController _controller, float _collisionDamage, float _tickDamage)
+    public FireEffect(FSMController _controller, Ethereal _ethereal, float _collisionDamage, float _tickDamage)
     {
         this.collisionDamageMultiplier = _collisionDamage;
         this.tickDamageMultiplier = _tickDamage;
-        damageDealerObject = _controller.gameObject;
+        controller = _controller;
+        ethereal = _ethereal;
     }
 
     public void CriticalHit()

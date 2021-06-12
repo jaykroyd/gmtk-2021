@@ -32,10 +32,10 @@ public class FSMController : MonoBehaviour
         canvas = FindObjectOfType<Canvas>();
         movement = GetComponent<Movement>();
 
-        fireEffect = new FireEffect(this, 10f, 1f);
-        waterEffect = new FireEffect(this, 10f, 1f);
-        windEffect = new FireEffect(this, 10f, 1f);
-        earthEffect = new FireEffect(this, 10f, 1f);
+        fireEffect = new FireEffect(this, ethereal, 10f, 1f);
+        waterEffect = new FireEffect(this, ethereal, 10f, 1f);
+        windEffect = new FireEffect(this, ethereal, 10f, 1f);
+        earthEffect = new FireEffect(this, ethereal, 10f, 1f);
     }
 
     protected virtual void Start()
