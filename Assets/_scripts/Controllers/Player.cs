@@ -6,9 +6,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class FSMController : MonoBehaviour
+public class Player : MonoBehaviour
 {
     [SerializeField, ReadOnly] private Vector2 input = Vector2.zero;
+    [SerializeField] private int health = 100;
+    [SerializeField] private int damage = 10;
     [SerializeField] private Ethereal ethereal;
     [RequireInterface(typeof(IRangeIndicator))]
     [SerializeField] private UnityEngine.Object[] indicators = new UnityEngine.Object[0];        
@@ -16,6 +18,7 @@ public class FSMController : MonoBehaviour
     private Canvas canvas = default;
     private Movement movement = default;
     private Rigidbody2D rb = default;
+    private HealthController healthController = default;
 
     bool isAiming = false;
     private Vector2? destination = null;
@@ -37,12 +40,16 @@ public class FSMController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         canvas = FindObjectOfType<Canvas>();
         movement = GetComponent<Movement>();
+        healthController = GetComponent<HealthController>();
         Anim = GetComponent<ModelController>();
 
         fireEffect = new FireEffect(this, ethereal, Color.red, Color.red, 10f, 1f);
         waterEffect = new FireEffect(this, ethereal, Color.blue, Color.blue, 10f, 1f);
         windEffect = new FireEffect(this, ethereal, Color.yellow, Color.yellow, 10f, 1f);
         earthEffect = new VineEffect(this, ethereal, Color.green, Color.green, vineLinkPrefab, vineTopPrefab);
+
+        healthController.MaxResource = new Elysium.Utils.RefValue<int>(() => health);
+        healthController.Fill();
     }
 
     protected virtual void Start()

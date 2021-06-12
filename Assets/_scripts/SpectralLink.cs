@@ -10,7 +10,7 @@ public class SpectralLink : MonoBehaviour
     [SerializeField] private float startWidth = 0.2f;
     [SerializeField] private float endWidth = 0.2f;
     [SerializeField] private float zOffset = 1f;
-    [SerializeField, ReadOnly] private FSMController controller = default;
+    [SerializeField, ReadOnly] private Player controller = default;
     [SerializeField, ReadOnly] private LineRenderer lineRenderer = default;
 
     public float Radius { get; set; } = 5;
@@ -45,7 +45,7 @@ public class SpectralLink : MonoBehaviour
 
     private void OnValidate()
     {
-        if (controller == null) { controller = FindObjectOfType<FSMController>(); }
+        if (controller == null) { controller = FindObjectOfType<Player>(); }
         if (lineRenderer == null) { lineRenderer = GetComponent<LineRenderer>(); }
         lineRenderer.startWidth = startWidth;
         lineRenderer.endWidth = endWidth;        

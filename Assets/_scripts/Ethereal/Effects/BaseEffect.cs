@@ -5,12 +5,12 @@ using UnityEngine;
 public abstract class BaseEffect : IEtherealEffect
 {
     protected Ethereal ethereal = default;
-    protected FSMController controller = default;
+    protected Player controller = default;
 
     protected Color mainColor = default;
     protected Color linkColor = default;
 
-    public BaseEffect(FSMController _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor)
+    public BaseEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor)
     {
         controller = _controller;
         ethereal = _ethereal;
@@ -20,17 +20,23 @@ public abstract class BaseEffect : IEtherealEffect
 
     public abstract void OnActivate();
 
-    public abstract void OnCollide(Collider _collider);
+    public abstract void OnCollide(Collider2D _collider);
 
-    public abstract void OnLinkCollideTick(Collider _collider);
+    public abstract void OnLinkCollideTick(Collider2D _collider);
 
     public abstract void OnDeactivate();
 
     public abstract void OnDrop();
 
-    public abstract void OnGoto();
+    public abstract void OnGotoStart();
 
-    public abstract void OnPull();
+    public abstract void OnGotoEnd();
 
-    public abstract void OnShoot();
+    public abstract void OnPullStart();
+
+    public abstract void OnPullEnd();
+
+    public abstract void OnShootStart();
+
+    public abstract void OnShootEnd();
 }

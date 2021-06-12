@@ -9,8 +9,9 @@ public class FireEffect : BaseEffect, IEtherealEffect, IDamageDealer
 {
     private float tickDamageMultiplier = 1f;
     private float collisionDamageMultiplier = 10f;
+    private bool isAttacking = false;
 
-    public FireEffect(FSMController _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, float _collisionDamage, float _tickDamage) : base(_controller, _ethereal, _mainColor, _linkColor)
+    public FireEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, float _collisionDamage, float _tickDamage) : base(_controller, _ethereal, _mainColor, _linkColor)
     {
         this.collisionDamageMultiplier = _collisionDamage;
         this.tickDamageMultiplier = _tickDamage;
@@ -34,12 +35,13 @@ public class FireEffect : BaseEffect, IEtherealEffect, IDamageDealer
         ethereal.Link.SetColor(linkColor);
     }
 
-    public override void OnCollide(Collider _collider)
+    public override void OnCollide(Collider2D _collider)
     {
+        if (!isAttacking) { return; }
         TryDealDamage(_collider, collisionDamageMultiplier);
     }
 
-    public override void OnLinkCollideTick(Collider _collider)
+    public override void OnLinkCollideTick(Collider2D _collider)
     {
         TryDealDamage(_collider, tickDamageMultiplier);
     }    
@@ -54,23 +56,40 @@ public class FireEffect : BaseEffect, IEtherealEffect, IDamageDealer
         
     }
 
-    public override void OnGoto()
+    public override void OnGotoStart()
     {
-        
-    }    
 
-    public override void OnPull()
-    {
-        ethereal.Anim.PlayAnimation("Attack");
     }
 
-    public override void OnShoot()
+    public override void OnGotoEnd()
     {
-        ethereal.Anim.PlayAnimation("Attack");
+
     }
 
-    private void TryDealDamage(Collider _collider, float _multiplier)
+    public override void OnPullStart()
     {
+        ethereal.Anim.PlayAnimation("Attack");
+        isAttacking = true;
+    }
+
+    public override void OnPullEnd()
+    {
+        isAttacking = false;
+    }
+
+    public override void OnShootStart()
+    {
+        ethereal.Anim.PlayAnimation("Attack");
+        isAttacking = true;
+    }
+
+    public override void OnShootEnd()
+    {
+        isAttacking = false;
+    }
+
+    private void TryDealDamage(Collider2D _collider, float _multiplier)
+    {        
         if (_collider.TryGetComponent(out IDamageable _unit))
         {
             if (DealsDamageToTeams.Contains(_unit.Team))

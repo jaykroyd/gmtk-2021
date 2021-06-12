@@ -9,10 +9,13 @@ public class Ethereal : MonoBehaviour
     [SerializeField] private float maxDistance = 5f;
 
     private Movement movement = default;
-    private Rigidbody2D rb = default;    
+    private Rigidbody2D rb = default;
+    private Player player = default;
 
     private Vector2? destination = null;
     private Transform target = null;
+    private float tickInterval = 1f;
+    private float tickTimer = 0;
 
     private IEtherealEffect effect = default;
 
@@ -30,12 +33,13 @@ public class Ethereal : MonoBehaviour
         Renderer = GetComponent<SpriteRenderer>();
         Link = GetComponentInChildren<SpectralLink>();
         Anim = GetComponent<ModelController>();
+        player = FindObjectOfType<Player>();
     }
 
     public bool IsActive => gameObject.activeSelf;
     public bool IsDeployed { get; set; }
 
-    public void Shoot(FSMController _controller, IEtherealEffect _effect)
+    public void Shoot(Player _controller, IEtherealEffect _effect)
     {
         this.effect = _effect;             
         transform.position = _controller.transform.position;
@@ -46,18 +50,20 @@ public class Ethereal : MonoBehaviour
         destination = (Vector2)transform.position + (direction.normalized * maxDistance);
 
         Activate();
-        effect.OnShoot();
+        effect.OnShootStart();
 
         void OnArriveAtDestination() 
         {
-            IsDeployed = true;
+            IsDeployed = true; 
+            OnDestinationArrival -= effect.OnShootEnd;
             OnDestinationArrival -= OnArriveAtDestination;            
         }
 
-        OnDestinationArrival += OnArriveAtDestination;
+        OnDestinationArrival += effect.OnShootEnd;
+        OnDestinationArrival += OnArriveAtDestination;        
     }
 
-    public void Drop(FSMController _controller, IEtherealEffect _effect)
+    public void Drop(Player _controller, IEtherealEffect _effect)
     {
         this.effect = _effect;
         transform.position = _controller.transform.position;
@@ -67,17 +73,35 @@ public class Ethereal : MonoBehaviour
         IsDeployed = true;
     }
 
-    public void Pull(FSMController _controller)
+    public void Pull(Player _controller)
     {
         target = _controller.transform;
-        effect.OnPull();
+        effect.OnPullStart();
+
+        void DeactivateOnArrival()
+        {
+            OnPlayerArrival -= effect.OnPullEnd;
+            OnPlayerArrival -= DeactivateOnArrival;
+            Deactivate();
+        }
+
+        OnPlayerArrival += effect.OnPullEnd;
         OnPlayerArrival += DeactivateOnArrival;
     }
 
-    public void Goto(FSMController _controller)
+    public void Goto(Player _controller)
     {
-        effect.OnGoto();
+        effect.OnGotoStart();
+
+        void DeactivateOnArrival()
+        {
+            OnPlayerArrival -= DeactivateOnArrival;
+            OnPlayerArrival -= effect.OnGotoEnd;
+            Deactivate();
+        }
+
         OnPlayerArrival += DeactivateOnArrival;
+        OnPlayerArrival += effect.OnGotoEnd;
     }
 
     private void Activate()
@@ -91,13 +115,7 @@ public class Ethereal : MonoBehaviour
         IsDeployed = false;
         this.gameObject.SetActive(false);
         effect.OnDeactivate();
-    }
-
-    private void DeactivateOnArrival()
-    {
-        OnPlayerArrival -= DeactivateOnArrival;
-        Deactivate();        
-    }
+    }    
 
     private void Update()
     {
@@ -125,16 +143,38 @@ public class Ethereal : MonoBehaviour
                 return;
             }
         }
+        
+        tickTimer -= Time.deltaTime;
+        if (tickTimer <= 0)
+        {
+            LinkTrigger();
+            tickTimer = tickInterval;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        effect.OnCollide(other);
+
         if (other.gameObject.layer == LayerMask.NameToLayer("Ground"))
-        {
-            if (destination == null) { return; }                
-            Debug.Log("Moo");
+        {            
+            if (destination == null) { return; }
             Stop();
-            OnDestinationArrival?.Invoke();
+            OnDestinationArrival?.Invoke();            
+        }
+    }
+
+    private void LinkTrigger()
+    {
+        var hits = Physics2D.RaycastAll(transform.position, (player.transform.position - transform.position).normalized, (player.transform.position - transform.position).magnitude);
+        if (hits.Length > 0)
+        {
+            foreach (var hit in hits)
+            {
+                if (hit.collider.gameObject == player.gameObject || hit.collider.gameObject == this.gameObject) { continue; }
+                // Debug.Log("Tick: " + hit.collider.name);
+                effect.OnLinkCollideTick(hit.collider);
+            }
         }
     }
 

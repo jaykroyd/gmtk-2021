@@ -4,14 +4,17 @@ using UnityEngine;
 
 public interface IEtherealEffect
 {
-    void OnShoot();
+    void OnShootStart();
+    void OnShootEnd();
     void OnDrop();
-    void OnPull();
-    void OnGoto();
+    void OnPullStart();
+    void OnPullEnd();
+    void OnGotoStart();
+    void OnGotoEnd();
 
     void OnActivate();
     void OnDeactivate();
 
-    void OnCollide(Collider _collider);
-    void OnLinkCollideTick(Collider _collider);
+    void OnCollide(Collider2D _collider);
+    void OnLinkCollideTick(Collider2D _collider);
 }

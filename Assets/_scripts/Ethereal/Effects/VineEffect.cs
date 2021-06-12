@@ -9,13 +9,13 @@ public class VineEffect : BaseEffect, IEtherealEffect
     GameObject vineTopPrefab = null;
     GameObject[] objs = null;
 
-    public VineEffect(FSMController _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, GameObject _vineLinkPrefab, GameObject _vineTopPrefab) : base(_controller, _ethereal, _mainColor, _linkColor)
+    public VineEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, GameObject _vineLinkPrefab, GameObject _vineTopPrefab) : base(_controller, _ethereal, _mainColor, _linkColor)
     {
         vineLinkPrefab = _vineLinkPrefab;
         vineTopPrefab = _vineTopPrefab;
 }
 
-    public override void OnCollide(Collider _collider)
+    public override void OnCollide(Collider2D _collider)
     {
         Vector2 startPosition = (Vector2)ethereal.transform.position;
         Vector2 endPosition = (Vector2)controller.transform.position;
@@ -35,8 +35,9 @@ public class VineEffect : BaseEffect, IEtherealEffect
         }
     }
 
-    public override void OnLinkCollideTick(Collider _collider)
+    public override void OnLinkCollideTick(Collider2D _collider)
     {
+
     }
 
     public override void OnActivate()
@@ -67,16 +68,27 @@ public class VineEffect : BaseEffect, IEtherealEffect
     {
     }
 
-    public override void OnGoto()
+    public override void OnGotoStart()
     {
     }
 
-    public override void OnPull()
+    public override void OnGotoEnd()
     {
     }
 
-    public override void OnShoot()
+    public override void OnPullStart()
     {
     }
 
+    public override void OnPullEnd()
+    {
+    }
+
+    public override void OnShootStart()
+    {
+    }
+
+    public override void OnShootEnd()
+    {
+    }
 }
