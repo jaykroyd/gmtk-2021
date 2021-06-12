@@ -34,14 +34,21 @@ public class VineEffect : BaseEffect
 
         objs = new GameObject[n+1];
         objs[0] = MonoBehaviour.Instantiate(vineTopPrefab, startPosition, Quaternion.LookRotation(Vector3.forward, -direction), ethereal.transform);
+
         HingeJoint2D hinge;
+        DistanceJoint2D distJoint;
         for (int i = 0; i < n; i++)
         {
             objs[i+1] = MonoBehaviour.Instantiate(vineLinkPrefab, startPosition + direction * spacing * (i + 0.5f), Quaternion.LookRotation(Vector3.forward, -direction), ethereal.transform);
             objs[i+1].transform.localScale = DISTANCE_BETWEEN_LINKS * new Vector3(1,1,1);
+            
             hinge = objs[i+1].GetComponent<HingeJoint2D>();
             hinge.connectedBody = objs[i].GetComponent<Rigidbody2D>();
-            
+
+            distJoint  = objs[i+1].GetComponent<DistanceJoint2D>();
+            distJoint.connectedBody = objs[i].GetComponent<Rigidbody2D>();
+            distJoint.distance = distance * 1.1f;
+            distJoint.maxDistanceOnly = true;
         }
         //TODO: Add bottom hinge-joing for swinging player
         
@@ -49,10 +56,11 @@ public class VineEffect : BaseEffect
         hinge.connectedBody = controller.GetComponent<Rigidbody2D>();
         hinge.anchor = new Vector2(0,-0.5f);
 
-        DistanceJoint2D restriction = objs[n].AddComponent<DistanceJoint2D>();
-        restriction.connectedBody = controller.GetComponent<Rigidbody2D>();
-        restriction.distance = distance * 1.1f;
-        restriction.maxDistanceOnly = true;
+        distJoint = objs[n].AddComponent<DistanceJoint2D>();
+        distJoint.connectedBody = controller.GetComponent<Rigidbody2D>();
+        distJoint.distance = distance * 1.1f;
+        distJoint.maxDistanceOnly = true;
+        
     }
 
     public override void OnLinkCollideTick(Collider2D _collider)
