@@ -20,8 +20,7 @@ public class Player : MonoBehaviour, IPushable
     private Rigidbody2D rb = default;
     private HealthController healthController = default;
 
-    bool isAiming = false;
-    private Vector2? destination = null;
+    bool isAiming = false;    
 
     private IEtherealEffect fireEffect = null;
     private IEtherealEffect waterEffect = null;
@@ -49,6 +48,8 @@ public class Player : MonoBehaviour, IPushable
 
     public ModelController Anim { get; set; }
     public Rigidbody2D Rigidbody => rb;
+    public Movement Movement => movement;
+    public Vector2? Destination { get; set; }
 
     public void Push(float _force, Vector2 _direction)
     {
@@ -90,22 +91,17 @@ public class Player : MonoBehaviour, IPushable
 
     protected virtual void Update()
     {
-        if (destination.HasValue) { AutomaticallyMoveToDestination(); }
+        if (Destination.HasValue) { AutomaticallyMoveToDestination(); }
         else { MoveBasedOnInput(); }
 
         DrawChangeStateUI(isAiming);
         if (selectedEffect != null && Input.GetMouseButtonDown(0)) 
         {
-            if (isAiming) { ShootEthereal(); }
-            else if (ethereal.IsDeployed) { GoToEthereal(); }
-        }
-        
-        if (selectedEffect != null && Input.GetMouseButtonDown(1)) 
-        {
-            if (isAiming) { DropEthereal(); }
-            else if (ethereal.IsDeployed) { PullEthereal(); }
+            if (isAiming) { DeployEthereal(); }
+            else if (ethereal.IsDeployed) { RetrieveEthereal(); }
         }
 
+        // Different Spirits
         if (!ethereal.IsActive && Input.GetKeyDown(KeyCode.Alpha1))
         { 
             selectedEffect = fireEffect;
@@ -141,12 +137,12 @@ public class Player : MonoBehaviour, IPushable
 
     private void AutomaticallyMoveToDestination()
     {
-        Vector2 direction = destination.Value - (Vector2)transform.position;
+        Vector2 direction = Destination.Value - (Vector2)transform.position;
         movement.Move(direction.normalized);
 
-        if (Vector2.Distance((Vector2)transform.position, destination.Value) < 0.5f)
+        if (Vector2.Distance((Vector2)transform.position, Destination.Value) < 0.5f)
         {
-            destination = null;
+            Destination = null;
             rb.velocity = Vector2.zero;
             movement.MoveSpeed = 10f;
             ethereal.InvokePlayerArrival();
@@ -169,32 +165,18 @@ public class Player : MonoBehaviour, IPushable
         var jFloat = movement.IsGrounded ? 0 : 1;
         Anim.SetAnimatorFloat("jump", jFloat);
         movement.Move(input.x, input.y == 1);
-    }
+    }    
 
-    private void ShootEthereal()
+    private void DeployEthereal()
     {
-        ethereal.Shoot(this, selectedEffect);
+        ethereal.Deploy(this, selectedEffect);
         isAiming = false;
         DeactivateAllHotbars();
     }
 
-    private void DropEthereal()
+    private void RetrieveEthereal()
     {
-        ethereal.Drop(this, selectedEffect);
-        isAiming = false;
-        DeactivateAllHotbars();
-    }
-
-    private void PullEthereal()
-    {
-        ethereal.Pull(this);
-    }
-
-    private void GoToEthereal()
-    {
-        destination = (Vector2)ethereal.transform.position;
-        movement.MoveSpeed = 30f;
-        ethereal.Goto(this);
+        ethereal.Retrieve(this);
     }
 
     private void DrawChangeStateUI(bool _active)

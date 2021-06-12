@@ -4,13 +4,10 @@ using UnityEngine;
 
 public interface IEtherealEffect
 {
-    void OnShootStart();
-    void OnShootEnd();
-    void OnDrop();
-    void OnPullStart();
-    void OnPullEnd();
-    void OnGotoStart();
-    void OnGotoEnd();
+    void DeployStart();
+    void DeployFinish();
+    void RetrieveStart();
+    void RetrieveFinish();
 
     void OnActivate();
     void OnDeactivate();

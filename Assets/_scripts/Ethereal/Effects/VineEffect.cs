@@ -47,9 +47,8 @@ public class VineEffect : BaseEffect
 
     public override void OnDeactivate()
     {
-        if (objs == null)
-            return;
-
+        base.OnDeactivate();
+        if (objs == null) { return; }
         for (int i = 0; i < objs.Length; i++)
         {
             MonoBehaviour.Destroy(objs[i]);
@@ -57,36 +56,23 @@ public class VineEffect : BaseEffect
         objs = null;
     }
 
-    public void OnReachDestination()
+    public override void DeployStart()
     {
-        ethereal.Pull(controller);
+        Shoot();
     }
 
-    public override void OnDrop()
+    public override void DeployFinish()
     {
+        
     }
 
-    public override void OnGotoStart()
+    public override void RetrieveStart()
     {
+        GoTo();
     }
 
-    public override void OnGotoEnd()
+    public override void RetrieveFinish()
     {
-    }
-
-    public override void OnPullStart()
-    {
-    }
-
-    public override void OnPullEnd()
-    {
-    }
-
-    public override void OnShootStart()
-    {
-    }
-
-    public override void OnShootEnd()
-    {
+        
     }
 }

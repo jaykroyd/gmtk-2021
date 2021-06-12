@@ -9,23 +9,30 @@ public class Ethereal : MonoBehaviour
     [SerializeField] private float maxDistance = 5f;
     [SerializeField] private ModelController[] models = new ModelController[4];
 
+    private IEtherealEffect effect = default;
+
     private Movement movement = default;
     private Rigidbody2D rb = default;
-    private Player player = default;
-
-    private Vector2? destination = null;
-    private Transform target = null;
+    private Player player = default;    
+    
     private float tickInterval = 1f;
     private float tickTimer = 0;
 
-    private IEtherealEffect effect = default;
-
+    public Transform Target { get; set; }
+    public Vector2? Destination { get; set; }
     public SpriteRenderer Renderer { get; private set; }
     public SpectralLink Link { get; private set; }
     public ModelController Anim { get; set; }
+    public float MaxDistance => maxDistance;
 
     public event UnityAction OnDestinationArrival;
     public event UnityAction OnPlayerArrival;
+
+    public event UnityAction OnDeployStart;
+    public event UnityAction OnDeployComplete;
+
+    public event UnityAction OnRetrieveStart;
+    public event UnityAction OnRetrieveComplete;
 
     public void Awake()
     {
@@ -39,69 +46,17 @@ public class Ethereal : MonoBehaviour
     public bool IsActive => gameObject.activeSelf;
     public bool IsDeployed { get; set; }
 
-    public void Shoot(Player _controller, IEtherealEffect _effect)
-    {
-        this.effect = _effect;             
-        transform.position = _controller.transform.position;
-
-        var worldPos = Utils.GetCurrentMousePosition();
-        worldPos = new Vector3(worldPos.x, worldPos.y, 0);
-        Vector2 direction = worldPos - (Vector2)transform.position;
-        destination = (Vector2)transform.position + (direction.normalized * maxDistance);
-
-        Activate();
-        effect.OnShootStart();
-
-        void OnArriveAtDestination() 
-        {
-            IsDeployed = true; 
-            OnDestinationArrival -= effect.OnShootEnd;
-            OnDestinationArrival -= OnArriveAtDestination;            
-        }
-
-        OnDestinationArrival += effect.OnShootEnd;
-        OnDestinationArrival += OnArriveAtDestination;        
-    }
-
-    public void Drop(Player _controller, IEtherealEffect _effect)
+    public void Deploy(Player _controller, IEtherealEffect _effect)
     {
         this.effect = _effect;
-        transform.position = _controller.transform.position;
 
         Activate();
-        effect.OnDrop();
-        IsDeployed = true;
+        effect.DeployStart();
     }
 
-    public void Pull(Player _controller)
+    public void Retrieve(Player _controller)
     {
-        target = _controller.transform;
-        effect.OnPullStart();
-
-        void DeactivateOnArrival()
-        {
-            OnPlayerArrival -= effect.OnPullEnd;
-            OnPlayerArrival -= DeactivateOnArrival;
-            Deactivate();
-        }
-
-        OnPlayerArrival += effect.OnPullEnd;
-        OnPlayerArrival += DeactivateOnArrival;
-    }
-
-    public void Goto(Player _controller)
-    {
-        effect.OnGotoStart();
-
-        void DeactivateOnArrival()
-        {
-            OnPlayerArrival -= DeactivateOnArrival;
-            OnPlayerArrival -= effect.OnGotoEnd;
-            Deactivate();
-        }
-
-        OnPlayerArrival += DeactivateOnArrival;
-        OnPlayerArrival += effect.OnGotoEnd;
+        effect.RetrieveStart();
     }
 
     private void Activate()
@@ -119,24 +74,24 @@ public class Ethereal : MonoBehaviour
 
     private void Update()
     {
-        if (destination.HasValue)
+        if (Destination.HasValue)
         {
-            Vector2 direction = destination.Value - (Vector2)transform.position;
+            Vector2 direction = Destination.Value - (Vector2)transform.position;
             movement.Move(direction.normalized);
 
-            if (Vector2.Distance((Vector2)transform.position, destination.Value) < 0.5f)
+            if (Vector2.Distance((Vector2)transform.position, Destination.Value) < 0.5f)
             {
                 Stop();
                 OnDestinationArrival?.Invoke();
                 return;
             }            
         }
-        else if (target != null)
+        else if (Target != null)
         {
-            Vector2 direction = (Vector2)target.position - (Vector2)transform.position;
+            Vector2 direction = (Vector2)Target.position - (Vector2)transform.position;
             movement.Move(direction.normalized);
 
-            if (Vector2.Distance((Vector2)transform.position, (Vector2)target.position) < 0.5f)
+            if (Vector2.Distance((Vector2)transform.position, (Vector2)Target.position) < 0.5f)
             {
                 Stop();
                 OnPlayerArrival?.Invoke();
@@ -158,7 +113,7 @@ public class Ethereal : MonoBehaviour
 
         if (other.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {            
-            if (destination == null) { return; }
+            if (Destination == null) { return; }
             Stop();
             OnDestinationArrival?.Invoke();            
         }
@@ -180,8 +135,8 @@ public class Ethereal : MonoBehaviour
 
     private void Stop()
     {
-        destination = null;
-        target = null;
+        Destination = null;
+        Target = null;
         rb.velocity = Vector2.zero;        
     }
 
@@ -210,9 +165,9 @@ public class Ethereal : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.black;
-        if (destination.HasValue)
+        if (Destination.HasValue)
         {
-            Gizmos.DrawWireSphere(destination.Value, 1f);
+            Gizmos.DrawWireSphere(Destination.Value, 1f);
         }
     }
 }

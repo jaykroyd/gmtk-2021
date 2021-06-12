@@ -37,6 +37,11 @@ public class FireEffect : BaseEffect, IDamageDealer
         base.OnActivate();        
     }
 
+    public override void OnDeactivate()
+    {
+        base.OnDeactivate();
+    }
+
     public override void OnCollide(Collider2D _collider)
     {
         if (!isAttacking) { return; }
@@ -48,44 +53,26 @@ public class FireEffect : BaseEffect, IDamageDealer
         TryDealDamage(_collider, tickDamageMultiplier, tickExplosionEffect);
     }    
 
-    public override void OnDeactivate()
+    public override void DeployStart()
     {
-        controller.SetParticles(-1);
-    }
-
-    public override void OnDrop()
-    {
-        
-    }
-
-    public override void OnGotoStart()
-    {
-
-    }
-
-    public override void OnGotoEnd()
-    {
-
-    }
-
-    public override void OnPullStart()
-    {
+        Shoot();
         ethereal.Anim.PlayAnimation("Attack");
         isAttacking = true;
     }
 
-    public override void OnPullEnd()
+    public override void DeployFinish()
     {
         isAttacking = false;
     }
 
-    public override void OnShootStart()
+    public override void RetrieveStart()
     {
+        Pull();
         ethereal.Anim.PlayAnimation("Attack");
         isAttacking = true;
     }
 
-    public override void OnShootEnd()
+    public override void RetrieveFinish()
     {
         isAttacking = false;
     }
@@ -100,5 +87,5 @@ public class FireEffect : BaseEffect, IDamageDealer
                 GameObject.Instantiate(_effect, _collider.transform.position, _effect.transform.rotation);
             }
         }
-    }
+    }    
 }
