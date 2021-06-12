@@ -16,7 +16,7 @@
       "dependencies": {
         "com.elysium.core": "1.0.0"
       },
-      "hash": "af0ea0b316779fd4908ee598d66caad3560daab9"
+      "hash": "a7916a951b5caaac65e3a615859743e1429c5d88"
     },
     "com.elysium.core": {
       "version": "https://github.com/byyjoww/Elysium.Core.git",
