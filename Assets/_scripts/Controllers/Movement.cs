@@ -33,7 +33,9 @@ public class Movement : MonoBehaviour
 
 	public bool IsGrounded => m_Grounded;
 
-	[System.Serializable]
+    public bool AirControl { get => m_AirControl; set => m_AirControl = value; }
+
+    [System.Serializable]
 	public class BoolEvent : UnityEvent<bool> { }
 
 	private void Awake()

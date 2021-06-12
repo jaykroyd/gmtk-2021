@@ -57,12 +57,14 @@ public class VineEffect : BaseEffect
     public override void OnActivate()
     {
         base.OnActivate();
+        controller.Movement.AirControl = false;
     }
 
     public override void OnDeactivate()
     {
         base.OnDeactivate();
         timer.OnTick -= Update;
+        controller.Movement.AirControl = true;
     }
 
     public override void DeployStart()

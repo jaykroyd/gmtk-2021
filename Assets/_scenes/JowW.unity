@@ -864,9 +864,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '1
-
-'
+  m_text: 5
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: e73a58f6e2794ae7b1b7e50b7fb811b0, type: 2}
@@ -1528,9 +1526,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '1
-
-'
+  m_text: 4
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: e73a58f6e2794ae7b1b7e50b7fb811b0, type: 2}
@@ -2666,8 +2662,6 @@ MonoBehaviour:
   fireExplosionHit: {fileID: 181478, guid: d166c8ca466ba4a42a2c22afdee2d7e1, type: 3}
   fireExplosionTick: {fileID: 181478, guid: 0d66c4cbe2edcbc47a6682465b385003, type: 3}
   healEffectTick: {fileID: 105942, guid: ff672eaca96d32c419d7a1f1b0346e8d, type: 3}
-  vineLinkPrefab: {fileID: 3918796242570209644, guid: 34a5d2d7ed36fb74392eebeb1a3cdf8a, type: 3}
-  vineTopPrefab: {fileID: 2505496943793293786, guid: 1cbe5982b0540ca45b021ea8f27502ae, type: 3}
 --- !u!114 &1133299063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3465,9 +3459,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '1
-
-'
+  m_text: 2
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: e73a58f6e2794ae7b1b7e50b7fb811b0, type: 2}
@@ -20030,9 +20022,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '1
-
-'
+  m_text: 3
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: e73a58f6e2794ae7b1b7e50b7fb811b0, type: 2}
