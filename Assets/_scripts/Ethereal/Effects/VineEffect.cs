@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class VineEffect : BaseEffect
 {
-    const float DISTANCE_BETWEEN_LINKS = 0.3f;
+    const float DISTANCE_BETWEEN_LINKS = 0.1f;
     GameObject vineLinkPrefab = null;
     GameObject vineTopPrefab = null;
     GameObject[] objs = null;
@@ -17,22 +17,42 @@ public class VineEffect : BaseEffect
 
     public override void OnCollide(Collider2D _collider)
     {
+        if(objs != null)
+            return;
+
+        if (_collider.gameObject.layer != LayerMask.NameToLayer("Ground"))
+            return;
+
         Vector2 startPosition = (Vector2)ethereal.transform.position;
         Vector2 endPosition = (Vector2)controller.transform.position;
 
         Vector2 direction = (endPosition - startPosition).normalized;
+        float distance = Vector2.Distance(startPosition, endPosition);
 
-        int n = Mathf.CeilToInt(Vector2.Distance(startPosition, endPosition) / DISTANCE_BETWEEN_LINKS);
-        float dist = Vector2.Distance(startPosition, endPosition) / n;
+        int n = Mathf.CeilToInt(distance / DISTANCE_BETWEEN_LINKS);
+        float spacing = distance / n;
 
         objs = new GameObject[n+1];
-        objs[0] = MonoBehaviour.Instantiate(vineTopPrefab, startPosition, Quaternion.LookRotation(direction, Vector3.back), ethereal.transform);
+        objs[0] = MonoBehaviour.Instantiate(vineTopPrefab, startPosition, Quaternion.LookRotation(Vector3.forward, -direction), ethereal.transform);
+        HingeJoint2D hinge;
         for (int i = 0; i < n; i++)
         {
-            objs[i+1] = MonoBehaviour.Instantiate(vineLinkPrefab, startPosition + direction * (i + 0.5f), Quaternion.LookRotation(direction, Vector3.back), ethereal.transform);
+            objs[i+1] = MonoBehaviour.Instantiate(vineLinkPrefab, startPosition + direction * spacing * (i + 0.5f), Quaternion.LookRotation(Vector3.forward, -direction), ethereal.transform);
             objs[i+1].transform.localScale = DISTANCE_BETWEEN_LINKS * new Vector3(1,1,1);
-            objs[i+1].GetComponent<HingeJoint2D>().connectedBody = objs[i].GetComponent<Rigidbody2D>();
+            hinge = objs[i+1].GetComponent<HingeJoint2D>();
+            hinge.connectedBody = objs[i].GetComponent<Rigidbody2D>();
+            
         }
+        //TODO: Add bottom hinge-joing for swinging player
+        
+        hinge = objs[n].AddComponent<HingeJoint2D>();
+        hinge.connectedBody = controller.GetComponent<Rigidbody2D>();
+        hinge.anchor = new Vector2(0,-0.5f);
+
+        DistanceJoint2D restriction = objs[n].AddComponent<DistanceJoint2D>();
+        restriction.connectedBody = controller.GetComponent<Rigidbody2D>();
+        restriction.distance = distance * 1.1f;
+        restriction.maxDistanceOnly = true;
     }
 
     public override void OnLinkCollideTick(Collider2D _collider)
