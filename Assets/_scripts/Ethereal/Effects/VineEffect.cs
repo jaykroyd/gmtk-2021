@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VineEffect : BaseEffect, IEtherealEffect
+public class VineEffect : BaseEffect
 {
     const float DISTANCE_BETWEEN_LINKS = 0.3f;
     GameObject vineLinkPrefab = null;

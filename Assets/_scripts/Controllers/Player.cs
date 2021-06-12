@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IPushable
 {
     [SerializeField, ReadOnly] private Vector2 input = Vector2.zero;
     [SerializeField] private int health = 100;
@@ -28,12 +28,18 @@ public class Player : MonoBehaviour
     private IEtherealEffect windEffect = null;
     private IEtherealEffect earthEffect = null;
 
+    [Separator("Fire Effect", true)]
+    [SerializeField] GameObject fireExplosionHit = null;
+    [SerializeField] GameObject fireExplosionTick = null;
+
+    [Separator("Vine Effect", true)]
     [SerializeField] GameObject vineLinkPrefab = null;
     [SerializeField] GameObject vineTopPrefab = null;
 
     private IEtherealEffect selectedEffect = null;
 
     public ModelController Anim { get; set; }
+    public Rigidbody2D Rigidbody => rb;
 
     private void Awake()
     {
@@ -43,9 +49,9 @@ public class Player : MonoBehaviour
         healthController = GetComponent<HealthController>();
         Anim = GetComponent<ModelController>();
 
-        fireEffect = new FireEffect(this, ethereal, Color.red, Color.red, 10f, 1f);
-        waterEffect = new FireEffect(this, ethereal, Color.blue, Color.blue, 10f, 1f);
-        windEffect = new FireEffect(this, ethereal, Color.yellow, Color.yellow, 10f, 1f);
+        fireEffect = new FireEffect(this, ethereal, Color.red, Color.red, 10f, 1f, fireExplosionHit, fireExplosionTick);
+        waterEffect = new FireEffect(this, ethereal, Color.blue, Color.blue, 10f, 1f, fireExplosionHit, fireExplosionTick);
+        windEffect = new WindEffect(this, ethereal, Color.yellow, Color.yellow, 0f, 5f, 200f);
         earthEffect = new VineEffect(this, ethereal, Color.green, Color.green, vineLinkPrefab, vineTopPrefab);
 
         healthController.MaxResource = new Elysium.Utils.RefValue<int>(() => health);
@@ -163,5 +169,23 @@ public class Player : MonoBehaviour
             indicator.Radius = 5f;
             indicator.SetActive(_active);
         }
-    }    
+    }
+
+    public void Push(float _force, Vector2 _direction)
+    {
+        Debug.DrawRay(transform.position, _direction * _force, Color.red);
+        Debug.LogError("pushed");
+        rb.velocity = Vector2.zero;
+        rb.AddForce(_direction * _force);
+    }
+
+    private void OnCollisionEnter2D(Collision2D _collision)
+    {
+        if (_collision.collider.TryGetComponent(out IDamageDealer _dealer))
+        {
+            Vector2 direction = (Vector2)ethereal.transform.position - (Vector2)_collision.collider.transform.position;
+            healthController.TakeDamage(_dealer, _dealer.Damage.Value);
+            Push(1000f, direction.normalized);
+        }
+    }
 }

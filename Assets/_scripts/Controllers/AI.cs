@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AI : MonoBehaviour
+public class AI : MonoBehaviour, IPushable, IDamageDealer
 {
     [SerializeField, ReadOnly] private Vector2 input = Vector2.zero;
     [SerializeField] private int health = 100;
@@ -19,8 +19,13 @@ public class AI : MonoBehaviour
     private Movement movement = default;
     private Rigidbody2D rb = default;
     private HealthController healthController = default;
-    
+
     public ModelController Anim { get; set; }
+    public RefValue<int> Damage { get; set; } = new RefValue<int>(() => 1);
+
+    public DamageTeam[] DealsDamageToTeams => new DamageTeam[]{ DamageTeam.PLAYER };
+
+    public GameObject DamageDealerObject => gameObject;
 
     private void Awake()
     {
@@ -30,6 +35,8 @@ public class AI : MonoBehaviour
         Anim = GetComponent<ModelController>();
 
         wanderTimer = wanderCooldown;
+
+        Damage = new RefValue<int>(() => damage);
 
         healthController.MaxResource = new Elysium.Utils.RefValue<int>(() => health);
         healthController.OnDeath += Die;
@@ -92,5 +99,15 @@ public class AI : MonoBehaviour
         float rx = Random.Range(patrolA.position.x, patrolB.position.x);
         float ry = Random.Range(patrolA.position.y, patrolB.position.y);
         return new Vector2(rx, ry);
+    }
+
+    public void Push(float _force, Vector2 _direction)
+    {
+        rb.AddForce(_direction * _force);
+    }
+
+    public void CriticalHit()
+    {
+        throw new System.NotImplementedException();
     }
 }
