@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VineEffect : MonoBehaviour, IEtherealEffect
+public class VineEffect : IEtherealEffect
 {
     FSMController controller;
     Ethereal ethereal;
@@ -13,12 +13,14 @@ public class VineEffect : MonoBehaviour, IEtherealEffect
     GameObject vineTopPrefab = null;
     GameObject[] objs = null;
 
-    public VineEffect(FSMController _controller, Ethereal _ethereal, Color _color)
+    public VineEffect(FSMController _controller, Ethereal _ethereal, Color _color, GameObject _vineLinkPrefab, GameObject _vineTopPrefab)
     {
         controller = _controller;
         ethereal = _ethereal;
         this.color = _color;
-    }
+        vineLinkPrefab = _vineLinkPrefab;
+        vineTopPrefab = _vineTopPrefab;
+}
 
     public void OnCollide(Collider _collider)
     {
@@ -31,10 +33,10 @@ public class VineEffect : MonoBehaviour, IEtherealEffect
         float dist = Vector2.Distance(startPosition, endPosition) / n;
 
         objs = new GameObject[n+1];
-        objs[0] = Instantiate(vineTopPrefab, startPosition, Quaternion.LookRotation(direction, Vector3.back), this.transform);
+        objs[0] = MonoBehaviour.Instantiate(vineTopPrefab, startPosition, Quaternion.LookRotation(direction, Vector3.back), ethereal.transform);
         for (int i = 0; i < n; i++)
         {
-            objs[i+1] = Instantiate(vineLinkPrefab, startPosition + direction * (i + 0.5f), Quaternion.LookRotation(direction, Vector3.back), this.transform);
+            objs[i+1] = MonoBehaviour.Instantiate(vineLinkPrefab, startPosition + direction * (i + 0.5f), Quaternion.LookRotation(direction, Vector3.back), ethereal.transform);
             objs[i+1].transform.localScale = DISTANCE_BETWEEN_LINKS * new Vector3(1,1,1);
             objs[i+1].GetComponent<HingeJoint2D>().connectedBody = objs[i].GetComponent<Rigidbody2D>();
         }
@@ -52,9 +54,12 @@ public class VineEffect : MonoBehaviour, IEtherealEffect
 
     public void OnDeactivate()
     {
+        if (objs == null)
+            return;
+
         for (int i = 0; i < objs.Length; i++)
         {
-            Destroy(objs[i]);
+            MonoBehaviour.Destroy(objs[i]);
         }
         objs = null;
     }

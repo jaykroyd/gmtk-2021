@@ -25,6 +25,9 @@ public class FSMController : MonoBehaviour
     private IEtherealEffect windEffect = null;
     private IEtherealEffect earthEffect = null;
 
+    [SerializeField] GameObject vineLinkPrefab = null;
+    [SerializeField] GameObject vineTopPrefab = null;
+
     private IEtherealEffect selectedEffect = null;
 
     public ModelController Anim { get; set; }
@@ -39,7 +42,7 @@ public class FSMController : MonoBehaviour
         fireEffect = new FireEffect(this, ethereal, Color.red, 10f, 1f);
         waterEffect = new FireEffect(this, ethereal, Color.blue, 10f, 1f);
         windEffect = new FireEffect(this, ethereal, Color.yellow, 10f, 1f);
-        earthEffect = new FireEffect(this, ethereal, Color.green, 10f, 1f);
+        earthEffect = new VineEffect(this, ethereal, Color.green, vineLinkPrefab, vineTopPrefab);
     }
 
     protected virtual void Start()
