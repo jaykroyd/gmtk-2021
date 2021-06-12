@@ -28,12 +28,14 @@ public class Player : MonoBehaviour, IPushable
     private IEtherealEffect fireEffect = null;
     private IEtherealEffect waterEffect = null;
     private IEtherealEffect windEffect = null;
+    private IEtherealEffect vineEffect = null;
     private IEtherealEffect earthEffect = null;
 
     [Separator("Hotbar", true)]
     [SerializeField] UI_HotbarSlot fireHotbar = null;
     [SerializeField] UI_HotbarSlot waterHotbar = null;
     [SerializeField] UI_HotbarSlot windHotbar = null;
+    [SerializeField] UI_HotbarSlot vineHotbar = null;
     [SerializeField] UI_HotbarSlot earthHotbar = null;
 
     [Separator("Particles", true)]
@@ -122,13 +124,24 @@ public class Player : MonoBehaviour, IPushable
             36000f
             );
         
-        earthEffect = new VineEffect(
+        vineEffect = new VineEffect(
             this, 
             ethereal, 
             Color.green, 
             Color.green, 
             3,
             Ethereal.BASE_TIME_IN_FORM
+            );
+
+        earthEffect = new VineEffect(
+            this,
+            ethereal,
+            Color.gray,
+            Color.gray,
+            4,
+            Ethereal.BASE_TIME_IN_FORM,
+            vineLinkPrefab,
+            vineTopPrefab
             );
 
         healthController.MaxResource = new Elysium.Utils.RefValue<int>(() => health);
@@ -179,6 +192,14 @@ public class Player : MonoBehaviour, IPushable
 
         if (!ethereal.IsActive && Input.GetKeyDown(KeyCode.Alpha4)) 
         { 
+            selectedEffect = vineEffect;
+            DeactivateAllHotbars();
+            vineHotbar.Highlight(true);
+            isAiming = true;
+        }
+
+        if (!ethereal.IsActive && Input.GetKeyDown(KeyCode.Alpha5))
+        {
             selectedEffect = earthEffect;
             DeactivateAllHotbars();
             earthHotbar.Highlight(true);
