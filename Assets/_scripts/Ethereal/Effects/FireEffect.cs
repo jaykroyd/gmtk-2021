@@ -37,6 +37,7 @@ public class FireEffect : IEtherealEffect, IDamageDealer
     {
         color.a = 0.3f;
         ethereal.Renderer.color = color;
+        ethereal.Link.SetColor(color);
     }
 
     public void OnCollide(Collider _collider)

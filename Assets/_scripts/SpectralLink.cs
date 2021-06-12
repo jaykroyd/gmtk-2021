@@ -2,15 +2,23 @@ using Elysium.Utils.Attributes;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Elysium.Utils;
 
 [RequireComponent(typeof(LineRenderer))]
-public class UI_LineIndicator : MonoBehaviour, IRangeIndicator
+public class SpectralLink : MonoBehaviour
 {
     [SerializeField] private float startWidth = 0.2f;
     [SerializeField] private float endWidth = 0.2f;
+    [SerializeField] private float zOffset = 1f;
+    [SerializeField, ReadOnly] private FSMController controller = default;
     [SerializeField, ReadOnly] private LineRenderer lineRenderer = default;
 
     public float Radius { get; set; } = 5;
+
+    public void SetColor(Color _color)
+    {
+        lineRenderer.material.SetColor("_Color", _color);
+    }
 
     public void SetActive(bool _active)
     {
@@ -20,23 +28,16 @@ public class UI_LineIndicator : MonoBehaviour, IRangeIndicator
     private void StartPosition()
     {
         lineRenderer.positionCount = 1;
-        lineRenderer.SetPosition(0, transform.position);        
+        lineRenderer.SetPosition(0, transform.position.SetZ(zOffset));
     }
 
     private void EndPosition()
     {
         lineRenderer.positionCount = 2;
-
-        Vector2 currentPos = GetWorldPositionFromMousePosition();
-        Vector2 maxPos = (Vector2)transform.position + (currentPos.normalized * Radius);
-
-        Vector2 endPos = Vector2.Min(currentPos, maxPos);
-        Vector3 finalEndPos = new Vector3(endPos.x, endPos.y, 0);
-
-        lineRenderer.SetPosition(1, finalEndPos);
+        lineRenderer.SetPosition(1, controller.transform.position.SetZ(zOffset));
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         StartPosition();
         EndPosition();
@@ -44,9 +45,10 @@ public class UI_LineIndicator : MonoBehaviour, IRangeIndicator
 
     private void OnValidate()
     {
+        if (controller == null) { controller = FindObjectOfType<FSMController>(); }
         if (lineRenderer == null) { lineRenderer = GetComponent<LineRenderer>(); }
         lineRenderer.startWidth = startWidth;
-        lineRenderer.endWidth = endWidth;
+        lineRenderer.endWidth = endWidth;        
     }
 
     private Vector2 GetWorldPositionFromMousePosition()

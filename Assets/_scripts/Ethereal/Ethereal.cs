@@ -17,6 +17,7 @@ public class Ethereal : MonoBehaviour
     private IEtherealEffect effect = default;
 
     public SpriteRenderer Renderer { get; private set; }
+    public SpectralLink Link { get; private set; }
     public ModelController Anim { get; set; }
 
     public event UnityAction OnDestinationArrival;
@@ -27,6 +28,7 @@ public class Ethereal : MonoBehaviour
         movement = GetComponent<Movement>();
         rb = GetComponent<Rigidbody2D>();
         Renderer = GetComponent<SpriteRenderer>();
+        Link = GetComponentInChildren<SpectralLink>();
         Anim = GetComponent<ModelController>();
     }
 
