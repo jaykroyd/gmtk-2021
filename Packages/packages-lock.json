@@ -9,6 +9,15 @@
       },
       "hash": "7aecfcf3d5159a6294f96f79d516256f7bfb4a85"
     },
+    "com.elysium.combat": {
+      "version": "https://github.com/byyjoww/Elysium.Combat.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.elysium.core": "1.0.0"
+      },
+      "hash": "e169f124f923db16a5f7db79fc8995275f02efd8"
+    },
     "com.elysium.core": {
       "version": "https://github.com/byyjoww/Elysium.Core.git",
       "depth": 0,

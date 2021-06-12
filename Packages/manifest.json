@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "com.elysium.audio": "https://github.com/byyjoww/Elysium.Audio.git",
+    "com.elysium.combat": "https://github.com/byyjoww/Elysium.Combat.git",
     "com.elysium.core": "https://github.com/byyjoww/Elysium.Core.git",
     "com.elysium.ui": "https://github.com/byyjoww/Elysium.UI.git",
     "com.elysium.ui.progressbar": "https://github.com/byyjoww/Elysium.UI.ProgressBar.git",

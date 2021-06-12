@@ -11,17 +11,44 @@ public class Ethereal : MonoBehaviour
     private Vector2? destination = null;
     private Transform target = null;
 
+    private IEtherealEffect effect = default;
+
     public string Name { get; private set; }
 
-    public void OnEnable()
+    public void Awake()
     {
         movement = GetComponent<Movement>();
         rb = GetComponent<Rigidbody2D>();
     }
 
-    public void OnDisable()
+    public void Shoot()
     {
-        
+        effect.OnShoot();
+    }
+
+    public void Drop()
+    {
+        effect.OnDrop();
+    }
+
+    public void Pull()
+    {
+        effect.OnPull();
+    }
+
+    public void Goto()
+    {
+        effect.OnGoto();
+    }
+
+    private void Activate()
+    {
+        effect.OnActivate();
+    }
+
+    public void Deactivate()
+    {
+        effect.OnDeactivate();
     }
 
     public void Update()
