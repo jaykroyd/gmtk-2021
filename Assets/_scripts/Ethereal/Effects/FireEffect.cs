@@ -84,7 +84,7 @@ public class FireEffect : BaseEffect, IDamageDealer
             if (DealsDamageToTeams.Contains(_unit.Team))
             {
                 _unit.TakeDamage(this, Mathf.CeilToInt(Damage.Value * _multiplier), "Fire");
-                GameObject.Instantiate(_effect, _collider.transform.position, _effect.transform.rotation);
+                GameObject.Instantiate(_effect, _collider.transform);
             }
         }
     }    

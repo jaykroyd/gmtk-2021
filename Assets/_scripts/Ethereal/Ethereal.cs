@@ -61,6 +61,11 @@ public class Ethereal : MonoBehaviour
         effect.RetrieveStart();
     }
 
+    public void ForceRetrieve(Player _controller)
+    {
+        effect.ForceRetrieve();
+    }
+
     private void Activate()
     {
         this.gameObject.SetActive(true);

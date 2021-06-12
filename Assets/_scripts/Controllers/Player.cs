@@ -11,13 +11,16 @@ public class Player : MonoBehaviour, IPushable
     [SerializeField, ReadOnly] private Vector2 input = Vector2.zero;
     [SerializeField] private int health = 100;
     [SerializeField] private int damage = 10;
+    [SerializeField] private int heal = 10;
+    [SerializeField] private float enemyPushForce = 36000f;
     [SerializeField] private Ethereal ethereal;
     [RequireInterface(typeof(IRangeIndicator))]
-    [SerializeField] private UnityEngine.Object[] indicators = new UnityEngine.Object[0];        
+    [SerializeField] private UnityEngine.Object[] indicators = new UnityEngine.Object[0];
 
     private Canvas canvas = default;
     private Movement movement = default;
     private Rigidbody2D rb = default;
+    private Collider collider = default;
     private HealthController healthController = default;
 
     bool isAiming = false;    
@@ -40,6 +43,9 @@ public class Player : MonoBehaviour, IPushable
     [SerializeField] GameObject fireExplosionHit = null;
     [SerializeField] GameObject fireExplosionTick = null;
 
+    [Separator("Water Effect", true)]
+    [SerializeField] GameObject healEffectTick = null;
+
     [Separator("Vine Effect", true)]
     [SerializeField] GameObject vineLinkPrefab = null;
     [SerializeField] GameObject vineTopPrefab = null;
@@ -49,6 +55,7 @@ public class Player : MonoBehaviour, IPushable
     public ModelController Anim { get; set; }
     public Rigidbody2D Rigidbody => rb;
     public Movement Movement => movement;
+    public HealthController HealthController => healthController;
     public Vector2? Destination { get; set; }
 
     public void Push(float _force, Vector2 _direction)
@@ -66,11 +73,18 @@ public class Player : MonoBehaviour, IPushable
         }
     }
 
+    public void ActivateCollisions(bool _active)
+    {
+        Debug.Log("collisions active state: "+_active);
+        gameObject.layer = _active ? LayerMask.NameToLayer("Default") : LayerMask.NameToLayer("Intangible");
+    }
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         canvas = FindObjectOfType<Canvas>();
         movement = GetComponent<Movement>();
+        collider = GetComponentInChildren<Collider>();
         healthController = GetComponent<HealthController>();
         Anim = GetComponentInChildren<ModelController>();
 
@@ -87,17 +101,15 @@ public class Player : MonoBehaviour, IPushable
             fireExplosionTick
             );
 
-        waterEffect = new FireEffect(
-            this, 
-            ethereal, 
-            Color.blue, 
-            Color.blue, 
+        waterEffect = new WaterEffect(
+            this,
+            ethereal,
+            Color.blue,
+            Color.blue,
             1,
             Ethereal.BASE_TIME_IN_FORM,
-            10f, 
-            1f, 
-            fireExplosionHit, 
-            fireExplosionTick
+            heal,
+            healEffectTick
             );
 
         windEffect = new WindEffect(
@@ -108,8 +120,8 @@ public class Player : MonoBehaviour, IPushable
             2,
             Ethereal.BASE_TIME_IN_FORM,
             0f, 
-            5f,
-            200f
+            7f,
+            36000f
             );
         
         earthEffect = new VineEffect(
@@ -241,11 +253,17 @@ public class Player : MonoBehaviour, IPushable
 
     private void OnCollisionEnter2D(Collision2D _collision)
     {
+        if (Destination.HasValue && _collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {            
+            Destination = null;
+            ethereal.ForceRetrieve(this);
+        }
+
         if (_collision.collider.TryGetComponent(out IDamageDealer _dealer))
         {
             Vector2 direction = (Vector2)ethereal.transform.position - (Vector2)_collision.collider.transform.position;
             healthController.TakeDamage(_dealer, _dealer.Damage.Value);
-            Push(1000f, direction.normalized);
+            Push(enemyPushForce, direction.normalized);
             Anim.PlayAnimation("Hit");
         }
     }

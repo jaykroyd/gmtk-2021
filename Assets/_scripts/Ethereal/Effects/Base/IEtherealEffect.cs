@@ -9,6 +9,8 @@ public interface IEtherealEffect
     void RetrieveStart();
     void RetrieveFinish();
 
+    void ForceRetrieve();
+
     void OnActivate();
     void OnDeactivate();
 

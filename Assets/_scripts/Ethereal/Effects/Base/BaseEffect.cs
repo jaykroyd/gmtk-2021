@@ -41,7 +41,7 @@ public abstract class BaseEffect : IEtherealEffect
     public virtual void OnDeactivate()
     {
         controller.SetParticles(-1);
-        timer.EndSilent();        
+        timer.EndSilent();
         timer.Dispose();
     }
 
@@ -56,6 +56,12 @@ public abstract class BaseEffect : IEtherealEffect
     public abstract void RetrieveStart();
 
     public abstract void RetrieveFinish();
+
+    public void ForceRetrieve()
+    {
+        controller.Movement.MoveSpeed = 10f;
+        Pull();
+    }
 
     protected virtual void Shoot()
     {

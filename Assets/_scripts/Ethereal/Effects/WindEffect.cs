@@ -27,6 +27,8 @@ public class WindEffect : BaseEffect
 
     public override void OnDeactivate()
     {
+        base.OnDeactivate();
+
         controller.Rigidbody.gravityScale = prevGravityScale;
     }
 
