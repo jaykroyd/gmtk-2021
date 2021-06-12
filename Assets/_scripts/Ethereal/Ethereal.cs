@@ -21,33 +21,55 @@ public class Ethereal : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    public void Shoot()
+    public bool IsActive()
     {
+        return gameObject.activeSelf;
+    }
+
+    public void Shoot(FSMController _controller, IEtherealEffect _effect)
+    {
+        this.effect = _effect;
+        var worldPos = Utils.GetCurrentMousePosition();
+        worldPos = new Vector3(worldPos.x, worldPos.y, 0);
+        Vector2 direction = worldPos - (Vector2)transform.position;
+        destination = (Vector2)transform.position + (direction.normalized * maxDistance);
+
         effect.OnShoot();
+        Activate();
     }
 
-    public void Drop()
+    public void Drop(FSMController _controller, IEtherealEffect _effect)
     {
+        this.effect = _effect;
+        transform.position = _controller.transform.position;
+
         effect.OnDrop();
+        Activate();
     }
 
-    public void Pull()
+    public void Pull(FSMController _controller)
     {
+        target = _controller.transform;
+
         effect.OnPull();
+        Deactivate();
     }
 
-    public void Goto()
+    public void Goto(FSMController _controller)
     {
         effect.OnGoto();
+        Deactivate();
     }
 
     private void Activate()
     {
+        this.gameObject.SetActive(true);
         effect.OnActivate();
     }
 
     public void Deactivate()
     {
+        this.gameObject.SetActive(false);
         effect.OnDeactivate();
     }
 
@@ -76,17 +98,6 @@ public class Ethereal : MonoBehaviour
             Vector2 direction = (Vector2)target.position - (Vector2)transform.position;
             movement.Move(direction.normalized);
         }
-    }
-
-    public void SetDirection(Vector2 _worldClickedPosition)
-    {
-        Vector2 direction = _worldClickedPosition - (Vector2)transform.position;
-        destination =  (Vector2)transform.position + (direction.normalized * maxDistance);
-    }
-
-    public void SetDestination(Transform _destination)
-    {
-        target = _destination;
     }
 
     private void OnTriggerEnter(Collider other)
