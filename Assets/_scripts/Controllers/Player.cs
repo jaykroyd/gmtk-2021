@@ -117,8 +117,8 @@ public class Player : MonoBehaviour, IPushable
         windEffect = new WindEffect(
             this, 
             ethereal, 
-            Color.white, 
-            Color.white, 
+            Color.gray, 
+            Color.gray, 
             2,
             Ethereal.BASE_TIME_IN_FORM,
             0f, 
@@ -140,8 +140,8 @@ public class Player : MonoBehaviour, IPushable
         earthEffect = new VineEffect(
             this,
             ethereal,
-            Color.gray,
-            Color.gray,
+            new Color32(117, 59, 11, 100),
+            new Color32(117, 59, 11, 255),
             4,
             Ethereal.BASE_TIME_IN_FORM,
             vineLinkPrefab,
