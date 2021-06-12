@@ -34,7 +34,7 @@ public class FireEffect : BaseEffect, IDamageDealer
 
     public override void OnActivate()
     {
-        base.OnActivate();
+        base.OnActivate();        
     }
 
     public override void OnCollide(Collider2D _collider)
@@ -50,7 +50,7 @@ public class FireEffect : BaseEffect, IDamageDealer
 
     public override void OnDeactivate()
     {
-        
+        controller.SetParticles(-1);
     }
 
     public override void OnDrop()
