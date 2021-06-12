@@ -34,6 +34,9 @@ public class Player : MonoBehaviour, IPushable
     [SerializeField] UI_HotbarSlot windHotbar = null;
     [SerializeField] UI_HotbarSlot earthHotbar = null;
 
+    [Separator("Particles", true)]
+    [SerializeField] GameObject[] particles = new GameObject[4];
+
     [Separator("Fire Effect", true)]
     [SerializeField] GameObject fireExplosionHit = null;
     [SerializeField] GameObject fireExplosionTick = null;
@@ -55,6 +58,14 @@ public class Player : MonoBehaviour, IPushable
         rb.AddForce(_direction * _force);
     }
 
+    public void SetParticles(int _index)
+    {
+        for (int i = 0; i < particles.Length; i++)
+        {
+            particles[i].SetActive(i == _index);
+        }
+    }
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -65,7 +76,7 @@ public class Player : MonoBehaviour, IPushable
 
         fireEffect = new FireEffect(this, ethereal, Color.red, Color.red, 0, 10f, 1f, fireExplosionHit, fireExplosionTick);
         waterEffect = new FireEffect(this, ethereal, Color.blue, Color.blue, 1, 10f, 1f, fireExplosionHit, fireExplosionTick);
-        windEffect = new WindEffect(this, ethereal, Color.yellow, Color.yellow, 2, 0f, 5f, 200f);
+        windEffect = new WindEffect(this, ethereal, Color.white, Color.white, 2, 0f, 5f, 200f);
         earthEffect = new VineEffect(this, ethereal, Color.green, Color.green, 3, vineLinkPrefab, vineTopPrefab);
 
         healthController.MaxResource = new Elysium.Utils.RefValue<int>(() => health);
@@ -201,7 +212,7 @@ public class Player : MonoBehaviour, IPushable
         waterHotbar.Highlight(false);
         windHotbar.Highlight(false);
         earthHotbar.Highlight(false);
-    }
+    }    
 
     private void OnCollisionEnter2D(Collision2D _collision)
     {
@@ -210,6 +221,7 @@ public class Player : MonoBehaviour, IPushable
             Vector2 direction = (Vector2)ethereal.transform.position - (Vector2)_collision.collider.transform.position;
             healthController.TakeDamage(_dealer, _dealer.Damage.Value);
             Push(1000f, direction.normalized);
+            Anim.PlayAnimation("Hit");
         }
     }
 }

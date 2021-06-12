@@ -25,6 +25,7 @@ public abstract class BaseEffect : IEtherealEffect
     {
         ethereal.SetModel(modelIndex);
         ethereal.Link.SetColor(linkColor);
+        controller.SetParticles(modelIndex);
     }
 
     public abstract void OnCollide(Collider2D _collider);

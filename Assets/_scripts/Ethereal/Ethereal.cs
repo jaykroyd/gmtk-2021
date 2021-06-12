@@ -187,6 +187,11 @@ public class Ethereal : MonoBehaviour
 
     public void SetModel(int _index)
     {
+        foreach (var model in models)
+        {
+            model.gameObject.SetActive(false);
+        }
+
         if (_index >= models.Length) 
         {
             Debug.LogError("index out of bounds of array");
