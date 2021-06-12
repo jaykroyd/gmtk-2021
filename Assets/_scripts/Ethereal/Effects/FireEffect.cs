@@ -66,7 +66,7 @@ public class FireEffect : IEtherealEffect, IDamageDealer
 
     public void OnPull()
     {
-        
+        ethereal.Anim.PlayAnimation("Attack");
     }
 
     public void OnShoot()

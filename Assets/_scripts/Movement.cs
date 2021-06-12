@@ -67,12 +67,12 @@ public class Movement : MonoBehaviour
 		m_Rigidbody2D.velocity = Vector3.SmoothDamp(m_Rigidbody2D.velocity, targetVelocity, ref m_Velocity, m_MovementSmoothing);
 
 		// If the input is moving the player right and the player is facing left...
-		if (_direction.magnitude > 0 && !m_FacingRight)
+		if (_direction.x > 0 && !m_FacingRight)
 		{
 			Flip();
 		}
 		// Otherwise if the input is moving the player left and the player is facing right...
-		else if (_direction.magnitude < 0 && m_FacingRight)
+		else if (_direction.x < 0 && m_FacingRight)
 		{
 			Flip();
 		}

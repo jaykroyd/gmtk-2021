@@ -117,6 +117,7 @@ public class FSMController : MonoBehaviour
         }
 
         input = new Vector2(x, y);
+        Anim.SetMoveSpeed(input.x);
         movement.Move(input.x, input.y == 1);
     }
 
