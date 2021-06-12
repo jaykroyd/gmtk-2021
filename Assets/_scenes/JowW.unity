@@ -665,7 +665,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_MovementSpeed: 10
-  m_JumpForce: 200
+  m_JumpForce: 450
   m_MovementSmoothing: 0.05
   m_AirControl: 1
   m_WhatIsGround:
@@ -2226,7 +2226,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eda2cf93bec0e7949a4ae9f908029e39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MovementSpeed: 10
+  m_MovementSpeed: 30
   m_JumpForce: 400
   m_MovementSmoothing: 0.05
   m_AirControl: 0
@@ -2301,6 +2301,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48f14d92c30d39a4b913231890d7d78c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxDistance: 10
 --- !u!4 &1852873212
 Transform:
   m_ObjectHideFlags: 0

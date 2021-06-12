@@ -25,6 +25,12 @@ public class Movement : MonoBehaviour
 		
 	public UnityEvent OnLandEvent;
 
+	public float MoveSpeed
+    {
+		get => m_MovementSpeed;
+		set => m_MovementSpeed = value;
+    }
+
 	[System.Serializable]
 	public class BoolEvent : UnityEvent<bool> { }
 
