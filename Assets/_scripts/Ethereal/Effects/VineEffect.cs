@@ -4,63 +4,49 @@ using UnityEngine;
 
 public class VineEffect : BaseEffect
 {
-    const float DISTANCE_BETWEEN_LINKS = 0.1f;
-    GameObject vineLinkPrefab = null;
-    GameObject vineTopPrefab = null;
-    GameObject[] objs = null;
+    bool isAttached = false;
+
+    [SerializeField] float MaxDistance = 10f;
+    [SerializeField] float ForceMultiplier = 100000f;
+    float VineLength = 0;
+
+    Rigidbody2D rb;
 
     public VineEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, int _modelIndex, float _timeInForm, GameObject _vineLinkPrefab, GameObject _vineTopPrefab) : base(_controller, _ethereal, _mainColor, _linkColor, _modelIndex, _timeInForm)
     {
-        vineLinkPrefab = _vineLinkPrefab;
-        vineTopPrefab = _vineTopPrefab;
-}
+        rb = _controller.GetComponent<Rigidbody2D>();
+    }
+
+    float DistanceToEthereal => Vector2.Distance((Vector2)controller.transform.position, (Vector2)ethereal.transform.position);
+    Vector3 GetVineDirection => ((Vector2)ethereal.transform.position - (Vector2)controller.transform.position).normalized;
+
+    void Update()
+    {
+
+        if (DistanceToEthereal > VineLength)
+        {
+            float excess = DistanceToEthereal - VineLength;
+            float force = ForceMultiplier * Mathf.Exp(excess);
+            Debug.Log("Moving too far from vine!"+force.ToString());
+            rb.AddForce(GetVineDirection * force * Time.deltaTime);
+        }
+
+    }
 
     public override void OnCollide(Collider2D _collider)
     {
-        if(objs != null)
+        if(isAttached)
             return;
 
         if (_collider.gameObject.layer != LayerMask.NameToLayer("Ground"))
             return;
 
-        Vector2 startPosition = (Vector2)ethereal.transform.position;
-        Vector2 endPosition = (Vector2)controller.transform.position;
+        Debug.Log("Attaching");
 
-        Vector2 direction = (endPosition - startPosition).normalized;
-        float distance = Vector2.Distance(startPosition, endPosition);
-
-        int n = Mathf.CeilToInt(distance / DISTANCE_BETWEEN_LINKS);
-        float spacing = distance / n;
-
-        objs = new GameObject[n+1];
-        objs[0] = MonoBehaviour.Instantiate(vineTopPrefab, startPosition, Quaternion.LookRotation(Vector3.forward, -direction), ethereal.transform);
-
-        HingeJoint2D hinge;
-        DistanceJoint2D distJoint;
-        for (int i = 0; i < n; i++)
-        {
-            objs[i+1] = MonoBehaviour.Instantiate(vineLinkPrefab, startPosition + direction * spacing * (i + 0.5f), Quaternion.LookRotation(Vector3.forward, -direction), ethereal.transform);
-            objs[i+1].transform.localScale = DISTANCE_BETWEEN_LINKS * new Vector3(1,1,1);
-            
-            hinge = objs[i+1].GetComponent<HingeJoint2D>();
-            hinge.connectedBody = objs[i].GetComponent<Rigidbody2D>();
-
-            distJoint  = objs[i+1].GetComponent<DistanceJoint2D>();
-            distJoint.connectedBody = objs[i].GetComponent<Rigidbody2D>();
-            distJoint.distance = distance * 1.1f;
-            distJoint.maxDistanceOnly = true;
-        }
-        //TODO: Add bottom hinge-joing for swinging player
+        isAttached = true;
+        VineLength = DistanceToEthereal;
         
-        hinge = objs[n].AddComponent<HingeJoint2D>();
-        hinge.connectedBody = controller.GetComponent<Rigidbody2D>();
-        hinge.anchor = new Vector2(0,-0.5f);
-
-        distJoint = objs[n].AddComponent<DistanceJoint2D>();
-        distJoint.connectedBody = controller.GetComponent<Rigidbody2D>();
-        distJoint.distance = distance * 1.1f;
-        distJoint.maxDistanceOnly = true;
-        
+        timer.OnTick += Update;
     }
 
     public override void OnLinkCollideTick(Collider2D _collider)
@@ -76,26 +62,26 @@ public class VineEffect : BaseEffect
     public override void OnDeactivate()
     {
         base.OnDeactivate();
-        if (objs == null) { return; }
-        for (int i = 0; i < objs.Length; i++)
-        {
-            MonoBehaviour.Destroy(objs[i]);
-        }
-        objs = null;
+        timer.OnTick -= Update;
     }
 
     public override void DeployStart()
     {
+        isAttached = false;
         Shoot();
     }
 
     public override void DeployFinish()
     {
-        
+        if(!isAttached)
+            Pull();
     }
 
     public override void RetrieveStart()
     {
+        if(!isAttached)
+            return;
+
         GoTo();
     }
 
