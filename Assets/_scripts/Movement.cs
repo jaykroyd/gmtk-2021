@@ -31,6 +31,8 @@ public class Movement : MonoBehaviour
 		set => m_MovementSpeed = value;
     }
 
+	public bool IsGrounded => m_Grounded;
+
 	[System.Serializable]
 	public class BoolEvent : UnityEvent<bool> { }
 

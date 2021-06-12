@@ -56,34 +56,34 @@ public class FSMController : MonoBehaviour
         if (selectedEffect != null && Input.GetMouseButtonDown(0)) 
         {
             if (isAiming) { ShootEthereal(); }
-            else { GoToEthereal(); }
+            else if (ethereal.IsDeployed) { GoToEthereal(); }
         }
         
         if (selectedEffect != null && Input.GetMouseButtonDown(1)) 
         {
             if (isAiming) { DropEthereal(); }
-            else { PullEthereal();  }
+            else if (ethereal.IsDeployed) { PullEthereal(); }
         }
 
-        if (!ethereal.IsActive() && Input.GetKeyDown(KeyCode.Alpha1))
+        if (!ethereal.IsActive && Input.GetKeyDown(KeyCode.Alpha1))
         { 
             selectedEffect = fireEffect;
             isAiming = true;
         }
 
-        if (!ethereal.IsActive() && Input.GetKeyDown(KeyCode.Alpha2)) 
+        if (!ethereal.IsActive && Input.GetKeyDown(KeyCode.Alpha2)) 
         { 
             selectedEffect = waterEffect;
             isAiming = true;
         }
 
-        if (!ethereal.IsActive() && Input.GetKeyDown(KeyCode.Alpha3))
+        if (!ethereal.IsActive && Input.GetKeyDown(KeyCode.Alpha3))
         { 
             selectedEffect = windEffect;
             isAiming = true;
         }
 
-        if (!ethereal.IsActive() && Input.GetKeyDown(KeyCode.Alpha4)) 
+        if (!ethereal.IsActive && Input.GetKeyDown(KeyCode.Alpha4)) 
         { 
             selectedEffect = earthEffect;
             isAiming = true;
@@ -94,11 +94,10 @@ public class FSMController : MonoBehaviour
     {
         if (Vector2.Distance((Vector2)transform.position, destination.Value) < 0.5f)
         {
-            Debug.Log("arrived at destination");
             destination = null;
             rb.velocity = Vector2.zero;
             movement.MoveSpeed = 10f;
-            ethereal.gameObject.SetActive(false);
+            ethereal.InvokePlayerArrival();
             return;
         }
 
@@ -118,6 +117,8 @@ public class FSMController : MonoBehaviour
 
         input = new Vector2(x, y);
         Anim.SetMoveSpeed(input.x);
+        var jFloat = movement.IsGrounded ? 0 : 1;
+        Anim.SetAnimatorFloat("jump", jFloat);
         movement.Move(input.x, input.y == 1);
     }
 
