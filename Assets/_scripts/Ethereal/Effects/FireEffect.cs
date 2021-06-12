@@ -5,72 +5,66 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class FireEffect : IEtherealEffect, IDamageDealer
+public class FireEffect : BaseEffect, IEtherealEffect, IDamageDealer
 {
-    private Ethereal ethereal = default;
-    private FSMController controller = default;
-
     private float tickDamageMultiplier = 1f;
     private float collisionDamageMultiplier = 10f;
-    private Color color = default;
+
+    public FireEffect(FSMController _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, float _collisionDamage, float _tickDamage) : base(_controller, _ethereal, _mainColor, _linkColor)
+    {
+        this.collisionDamageMultiplier = _collisionDamage;
+        this.tickDamageMultiplier = _tickDamage;
+    }
 
     public RefValue<int> Damage { get; set; } = new RefValue<int>(() => 1);
 
     public DamageTeam[] DealsDamageToTeams => new DamageTeam[] { DamageTeam.ENEMY };
     public GameObject DamageDealerObject => controller.gameObject;
-
-    public FireEffect(FSMController _controller, Ethereal _ethereal, Color _color, float _collisionDamage, float _tickDamage)
-    {
-        this.collisionDamageMultiplier = _collisionDamage;
-        this.tickDamageMultiplier = _tickDamage;
-        controller = _controller;
-        ethereal = _ethereal;
-        this.color = _color;
-    }
+    
 
     public void CriticalHit()
     {
         
     }
 
-    public void OnActivate()
+    public override void OnActivate()
     {
-        color.a = 0.3f;
-        ethereal.Renderer.color = color;
-        ethereal.Link.SetColor(color);
+        mainColor.a = 0.3f;
+        ethereal.Renderer.color = mainColor;
+        ethereal.Link.SetColor(linkColor);
     }
 
-    public void OnCollide(Collider _collider)
+    public override void OnCollide(Collider _collider)
     {
         TryDealDamage(_collider, collisionDamageMultiplier);
     }
 
-    public void OnLinkCollideTick(Collider _collider)
+    public override void OnLinkCollideTick(Collider _collider)
     {
         TryDealDamage(_collider, tickDamageMultiplier);
     }    
 
-    public void OnDeactivate()
+    public override void OnDeactivate()
     {
         
     }
 
-    public void OnDrop()
+    public override void OnDrop()
     {
         
     }
 
-    public void OnGoto()
+    public override void OnGoto()
     {
         
     }    
 
-    public void OnPull()
+    public override void OnPull()
     {
         ethereal.Anim.PlayAnimation("Attack");
     }
 
-    public void OnShoot()
+    public override void OnShoot()
     {
         ethereal.Anim.PlayAnimation("Attack");
     }

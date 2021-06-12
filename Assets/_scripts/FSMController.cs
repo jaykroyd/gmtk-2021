@@ -36,10 +36,10 @@ public class FSMController : MonoBehaviour
         movement = GetComponent<Movement>();
         Anim = GetComponent<ModelController>();
 
-        fireEffect = new FireEffect(this, ethereal, Color.red, 10f, 1f);
-        waterEffect = new FireEffect(this, ethereal, Color.blue, 10f, 1f);
-        windEffect = new FireEffect(this, ethereal, Color.yellow, 10f, 1f);
-        earthEffect = new FireEffect(this, ethereal, Color.green, 10f, 1f);
+        fireEffect = new FireEffect(this, ethereal, Color.red, Color.red, 10f, 1f);
+        waterEffect = new FireEffect(this, ethereal, Color.blue, Color.blue, 10f, 1f);
+        windEffect = new FireEffect(this, ethereal, Color.yellow, Color.yellow, 10f, 1f);
+        earthEffect = new FireEffect(this, ethereal, Color.green, Color.green, 10f, 1f);
     }
 
     protected virtual void Start()
