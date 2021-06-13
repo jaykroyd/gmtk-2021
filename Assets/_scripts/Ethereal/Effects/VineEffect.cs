@@ -39,7 +39,7 @@ public class VineEffect : BaseEffect
             return;
             
         bool isInLayer = ethereal.Movement.WhatIsGround.value == (ethereal.Movement.WhatIsGround.value | (1 << _collider.gameObject.layer));
-        if (isInLayer)
+        if (!isInLayer)
             return;
 
         Debug.Log("Attaching");
@@ -91,6 +91,11 @@ public class VineEffect : BaseEffect
     public override void RetrieveFinish()
     {
         controller.airJump = true;
-        // TODO: Timer -> set to false after 2 seconds
+        Elysium.Utils.Timers.Timer.CreateTimer(2f, ()=>false, false).OnEnd += 
+        () =>
+        {
+            if(controller) 
+                controller.airJump = false;
+        };
     }
 }
