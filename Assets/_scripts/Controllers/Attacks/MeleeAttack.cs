@@ -16,12 +16,12 @@ public class MeleeAttack : IAttack
         this.cooldownTimer = Timer.CreateEmptyTimer(() => false, true);
     }
 
-    public void Attack(AI _ai, IDamageable _target)
+    public void Attack(IAttacker _attacker, IDamageable _target)
     {
         if (!cooldownTimer.IsEnded) { return; }
 
         cooldownTimer.SetTime(attackCooldown);
-        _ai.Anim.PlayAnimation("Attack");
-        _target.TakeDamage(_ai, _ai.Damage.Value);
+        _attacker.Anim.PlayAnimation("Attack");
+        _target.TakeDamage(_attacker.DamageDealer, _attacker.DamageDealer.Damage.Value);
     }
 }

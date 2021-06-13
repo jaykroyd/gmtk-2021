@@ -4,5 +4,5 @@ public interface IAttack
 {
     float Range { get; }
 
-    void Attack(AI _ai, IDamageable _target);
+    void Attack(IAttacker _ai, IDamageable _target);
 }
