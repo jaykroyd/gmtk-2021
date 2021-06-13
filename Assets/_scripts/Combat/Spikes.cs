@@ -40,6 +40,7 @@ public class Spikes : MonoBehaviour, IDamageDealer
     {
         foreach (var dmg in TargetsInCollider)
         {
+            Debug.LogError($"dealing damage from spikes to {dmg.DamageableObject.name}");
             dmg.TakeDamage(this, Damage.Value, "Spike");
         }
     }
