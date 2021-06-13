@@ -13,13 +13,10 @@ public class UI_HotbarSlot : MonoBehaviour
 
     private Color defaultColor = default;
 
-    private void Awake()
-    {
-        defaultColor = highlight.color;        
-    }
-
     public void SetupCooldownBar(IFillable _fillable)
     {
+        defaultColor = highlight.color;
+        gameObject.SetActive(true);
         GetComponent<ProgressBarFillableValue>().SetRuntimeData(_fillable);
     }
 

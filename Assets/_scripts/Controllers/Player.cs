@@ -98,10 +98,6 @@ public class Player : MonoBehaviour, IPushable
         healthController = GetComponent<HealthController>();
         Anim = GetComponentInChildren<ModelController>();
         CreateFireEffect();
-        CreateWaterEffect();
-        CreateWindEffect();
-        CreateVineEffect();
-        CreateEarthEffect();
         healthController.MaxResource = new Elysium.Utils.RefValue<int>(() => health);
         healthController.Fill();
     }
