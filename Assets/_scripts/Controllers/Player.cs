@@ -79,7 +79,6 @@ public class Player : MonoBehaviour, IPushable
 
     public void ActivateCollisions(bool _active)
     {
-        Debug.Log("collisions active state: "+_active);
         gameObject.layer = _active ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("Intangible");
     }
 
@@ -288,10 +287,11 @@ public class Player : MonoBehaviour, IPushable
 
     private void OnCollisionEnter2D(Collision2D _collision)
     {
-        if (_collision.collider.TryGetComponent(out IDamageDealer _dealer))
+        var dealer = _collision.collider.transform.root.GetComponentInChildren<IDamageDealer>();
+        if (dealer != null)
         {
             Vector2 direction = (Vector2)ethereal.transform.position - (Vector2)_collision.collider.transform.position;
-            healthController.TakeDamage(_dealer, _dealer.Damage.Value);
+            healthController.TakeDamage(dealer, dealer.Damage.Value);
             Push(enemyPushForce, direction.normalized);
             Anim.PlayAnimation("Hit");
         }
