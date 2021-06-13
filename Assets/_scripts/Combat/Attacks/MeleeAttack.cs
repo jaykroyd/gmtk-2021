@@ -9,10 +9,11 @@ public class MeleeAttack : IAttack
     private TimerInstance cooldownTimer = default;
     private float attackCooldown = 1f;
 
-    public float Range => 1.5f;
+    public float Range { get; set; } = 1.5f;
 
-    public MeleeAttack()
+    public MeleeAttack(float _range = 1.5f)
     {
+        this.Range = _range;
         this.cooldownTimer = Timer.CreateEmptyTimer(() => false, true);
     }
 

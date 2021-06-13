@@ -29,6 +29,7 @@ public class CircularAOEProjectileAttack : IAttack
             _target.TakeDamage(_ai.DamageDealer, Mathf.CeilToInt(_ai.DamageDealer.Damage.Value * damageMultiplier));
         };
 
+        _ai.Anim.PlayAnimation("Attack02");
         for (int i = 0; i < numOfProjectiles; i++)
         {
             Vector3 dir = Vector2.down;

@@ -27,6 +27,7 @@ public class DirectionalProjectileAttack : IAttack
             _target.TakeDamage(_ai.DamageDealer, Mathf.CeilToInt(_ai.DamageDealer.Damage.Value * damageMultiplier));
         };
 
+        _ai.Anim.PlayAnimation("Attack02");
         Vector3 dir = _target.DamageableObject.transform.position - _ai.Anim.Firepoint.position;
         var proj = GameObject.Instantiate(projectile, _ai.Anim.Firepoint.position, projectile.transform.rotation);
         proj.Setup((Vector2)dir.normalized, _ai.DamageDealer.DealsDamageToTeams, OnHit);

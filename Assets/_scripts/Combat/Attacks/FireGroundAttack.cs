@@ -24,6 +24,7 @@ public class FireGroundAttack : IAttack
 
     public void Attack(IAttacker _ai, IDamageable _target)
     {
+        _ai.Anim.PlayAnimation("Attack03");
         fireGround.Enable(_ai as IDamageDealer, fireGroundAttackDamageMultiplier);
         fireGroundAttackTimer.SetTime(fireGroundAttackDuration);
     }

@@ -43,7 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84214a1688bbc8548b8bfa08249f649f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnRadius: 2
-  reward:
-    Score: 0
   scorePrefab: {fileID: -6069737961071086798, guid: f494cf5210bc39f449a98ce034575608, type: 3}
+  fireEffect: {fileID: 4879974682045714453, guid: b4aaaf8fc2eb27b4da3f2ec5f5c344ed, type: 3}
+  earthEffect: {fileID: 4879974682045714453, guid: b0e0a2f2e62c64148880ac366949c1b2, type: 3}
+  vineEffect: {fileID: 4879974682045714453, guid: 518935ac7beebf24eb3328b1211a6116, type: 3}
+  waterEffect: {fileID: 4879974682045714453, guid: 194749a4a928044428c9f4bb5ce653ef, type: 3}
+  windEffect: {fileID: 4879974682045714453, guid: 6608c7878c0192b4f8e4357dcafbce09, type: 3}

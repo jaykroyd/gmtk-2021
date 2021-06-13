@@ -188,6 +188,7 @@ public class AI : MonoBehaviour, IPushable, IDamageDealer, IAttacker
 
     private void Die()
     {
+        Anim.PlayAnimation("Death");
         DropScore();
         Destroy(gameObject, 1f);
     }
