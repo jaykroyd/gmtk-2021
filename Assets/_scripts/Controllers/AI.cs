@@ -13,8 +13,10 @@ public class AI : MonoBehaviour, IPushable, IDamageDealer
     [SerializeField] private int damage = 10;
     [SerializeField] private float wanderCooldown = 2f;
     [SerializeField] private float aggroRange = 8f;
-    [SerializeField] private float maxAggroRange = 10f;
+    [SerializeField] private float maxAggroRange = 10f;    
     [SerializeField] private Transform patrolA, patrolB = default;
+    [SerializeField] private RewardPackage reward = default;
+    [SerializeField] private Reward rewardPrefab = default;
 
     private Vector2? destination = null;
     private IDamageable target = null;
@@ -181,7 +183,13 @@ public class AI : MonoBehaviour, IPushable, IDamageDealer
 
     private void Die()
     {
+        DropScore();
         Destroy(gameObject, 1f);
+    }
+
+    private void DropScore()
+    {
+        Reward.Create(rewardPrefab, transform.position, reward);
     }
 
     private void OnDrawGizmos()
@@ -205,6 +213,6 @@ public class AI : MonoBehaviour, IPushable, IDamageDealer
 
     public void CriticalHit()
     {
-        throw new System.NotImplementedException();
+        
     }
 }

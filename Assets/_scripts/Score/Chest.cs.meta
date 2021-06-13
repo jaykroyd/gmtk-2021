@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 68125a364d08d0841b481d88fd6eb65a
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - rewardPrefab: {fileID: 5849985969363822595, guid: 45f91323079fcdf4f8282cfd4f33f282, type: 3}
+  - rb: {instanceID: 0}
+  - collider: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -5,7 +5,7 @@ using UnityEditor;
 using Elysium.Utils.Attributes;
 
 [RequireComponent(typeof(LineRenderer))]
-public class UI_CircleIndicator : MonoBehaviour, IRangeIndicator
+public class CircleIndicator : MonoBehaviour, IRangeIndicator
 {
     [SerializeField] private int segments = 50;
     [SerializeField] private float width = 0.05f;

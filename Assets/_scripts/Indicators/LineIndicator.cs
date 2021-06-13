@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
-public class UI_LineIndicator : MonoBehaviour, IRangeIndicator
+public class LineIndicator : MonoBehaviour, IRangeIndicator
 {
     [SerializeField] private float startWidth = 0.2f;
     [SerializeField] private float endWidth = 0.2f;

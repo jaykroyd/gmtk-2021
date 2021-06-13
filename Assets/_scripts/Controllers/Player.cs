@@ -1,4 +1,5 @@
 using Elysium.Combat;
+using Elysium.Core;
 using Elysium.UI.ProgressBar;
 using Elysium.Utils.Attributes;
 using System;
@@ -15,6 +16,7 @@ public class Player : MonoBehaviour, IPushable
     [SerializeField] private int heal = 10;
     [SerializeField] private float enemyPushForce = 36000f;
     [SerializeField] private Ethereal ethereal;
+    [SerializeField] private LongValueSO playerScore = default;
     [RequireInterface(typeof(IRangeIndicator))]
     [SerializeField] private UnityEngine.Object[] indicators = new UnityEngine.Object[0];
 
@@ -77,7 +79,12 @@ public class Player : MonoBehaviour, IPushable
     public void ActivateCollisions(bool _active)
     {
         Debug.Log("collisions active state: "+_active);
-        gameObject.layer = _active ? LayerMask.NameToLayer("Default") : LayerMask.NameToLayer("Intangible");
+        gameObject.layer = _active ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("Intangible");
+    }
+
+    public void ReceiveReward(RewardPackage _reward)
+    {
+        playerScore.Value += _reward.Score;
     }
 
     private void Awake()
@@ -276,7 +283,7 @@ public class Player : MonoBehaviour, IPushable
         windHotbar.Highlight(false);
         vineHotbar.Highlight(false);
         earthHotbar.Highlight(false);
-    }    
+    }
 
     private void OnCollisionEnter2D(Collision2D _collision)
     {
