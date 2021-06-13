@@ -130,7 +130,6 @@ public class AI : MonoBehaviour, IPushable, IDamageDealer
                 {
                     if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Ground"))
                     {
-                        Debug.Log("collider is ground");
                         jumpTimer.SetTime(jumpCooldown);
                         input.y = 1;
                         return;
