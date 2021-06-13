@@ -979,6 +979,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3155288570342564428, guid: 9b749a5360088c7438305be2a7c1efa8, type: 3}
+      propertyPath: m_WhatIsGround.m_Bits
+      value: 2056
+      objectReference: {fileID: 0}
     - target: {fileID: 3155288570342564429, guid: 9b749a5360088c7438305be2a7c1efa8, type: 3}
       propertyPath: ethereal
       value: 

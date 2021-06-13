@@ -26,7 +26,6 @@ public class Player : MonoBehaviour, IPushable
     private Rigidbody2D rb = default;
     private Collider collider = default;
     private HealthController healthController = default;
-    private LayerMask[] groundLayers = default;
 
     bool isAiming = false;    
 
@@ -97,12 +96,6 @@ public class Player : MonoBehaviour, IPushable
         collider = GetComponentInChildren<Collider>();
         healthController = GetComponent<HealthController>();
         Anim = GetComponentInChildren<ModelController>();
-
-        groundLayers = new LayerMask[]
-        {
-            LayerMask.NameToLayer("Ground"),
-            LayerMask.NameToLayer("Platforms"),
-        };
 
         fireEffect = new FireEffect(
             this,
@@ -306,7 +299,8 @@ public class Player : MonoBehaviour, IPushable
 
     private void OnCollisionStay2D(Collision2D _collision)
     {
-        if (Destination.HasValue && groundLayers.Contains(_collision.gameObject.layer))
+        bool isInLayer = Movement.WhatIsGround.value == (Movement.WhatIsGround.value | (1 << _collision.gameObject.layer));
+        if (Destination.HasValue && isInLayer)
         {
             Destination = null;
             ethereal.ForceRetrieve(this);

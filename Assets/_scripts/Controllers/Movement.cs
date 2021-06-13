@@ -32,8 +32,9 @@ public class Movement : MonoBehaviour
     }
 
 	public bool IsGrounded => m_Grounded;
+	public LayerMask WhatIsGround => m_WhatIsGround;
 
-    public bool AirControl { get => m_AirControl; set => m_AirControl = value; }
+	public bool AirControl { get => m_AirControl; set => m_AirControl = value; }
 
     [System.Serializable]
 	public class BoolEvent : UnityEvent<bool> { }

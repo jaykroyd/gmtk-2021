@@ -31,7 +31,6 @@ public class AI : MonoBehaviour, IPushable, IDamageDealer, IAttacker
     private HealthController healthController = default;
     private Player player = default;
     private TimerInstance jumpTimer = default;
-    private LayerMask[] groundLayers = default;
 
     public IModelController Anim { get; set; }
     public RefValue<int> Damage { get; set; } = new RefValue<int>(() => 1);
@@ -44,12 +43,6 @@ public class AI : MonoBehaviour, IPushable, IDamageDealer, IAttacker
 
     private void Awake()
     {
-        groundLayers = new LayerMask[]
-        {
-            LayerMask.NameToLayer("Ground"),
-            LayerMask.NameToLayer("Platforms"),
-        };
-
         rb = GetComponent<Rigidbody2D>();
         movement = GetComponent<Movement>();
         healthController = GetComponentInChildren<HealthController>();
@@ -139,7 +132,8 @@ public class AI : MonoBehaviour, IPushable, IDamageDealer, IAttacker
             {
                 foreach (var hit in hits)
                 {
-                    if (groundLayers.Contains(hit.collider.gameObject.layer))
+                    bool isInLayer = movement.WhatIsGround.value == (movement.WhatIsGround.value | (1 << hit.collider.gameObject.layer));
+                    if (isInLayer)
                     {
                         jumpTimer.SetTime(jumpCooldown);
                         input.y = 1;
