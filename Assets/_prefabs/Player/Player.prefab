@@ -1557,6 +1557,7 @@ MonoBehaviour:
   windHotbar: {fileID: 0}
   vineHotbar: {fileID: 0}
   earthHotbar: {fileID: 0}
+  bossBar: {fileID: 0}
   particles:
   - {fileID: 3155288569475430670}
   - {fileID: 3155288571012685354}

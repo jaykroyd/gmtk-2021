@@ -27,6 +27,7 @@ public class Player : MonoBehaviour, IPushable
     private Rigidbody2D rb = default;
     private Collider collider = default;
     private HealthController healthController = default;
+    private Boss boss = default;
 
     bool isAiming = false;   
     public bool airJump = false; 
@@ -43,6 +44,7 @@ public class Player : MonoBehaviour, IPushable
     [SerializeField] UI_HotbarSlot windHotbar = null;
     [SerializeField] UI_HotbarSlot vineHotbar = null;
     [SerializeField] UI_HotbarSlot earthHotbar = null;
+    [SerializeField] UI_ProgressBar bossBar = null;
 
     [Separator("Particles", true)]
     [SerializeField] GameObject[] particles = new GameObject[4];
@@ -97,6 +99,8 @@ public class Player : MonoBehaviour, IPushable
         collider = GetComponentInChildren<Collider>();
         healthController = GetComponent<HealthController>();
         Anim = GetComponentInChildren<ModelController>();
+        boss = FindObjectOfType<Boss>();
+
         CreateFireEffect();
         healthController.MaxResource = new Elysium.Utils.RefValue<int>(() => health);
         healthController.Fill();
@@ -188,6 +192,8 @@ public class Player : MonoBehaviour, IPushable
 
     protected virtual void Update()
     {
+        bossBar.gameObject.SetActive(Vector2.Distance(transform.position, boss.transform.position) < 20f);
+
         if (Destination.HasValue) { AutomaticallyMoveToDestination(); }
         else { MoveBasedOnInput(); }
 
