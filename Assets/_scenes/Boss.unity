@@ -2108,6 +2108,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 888795800163451731, guid: f9ee51f5fcddafc429788c746b342400, type: 3}
+      propertyPath: reward.Spirit
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 888795800163451733, guid: f9ee51f5fcddafc429788c746b342400, type: 3}
       propertyPath: m_RootOrder
       value: 8
