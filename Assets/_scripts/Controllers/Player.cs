@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour, IPushable
 {
@@ -103,6 +104,12 @@ public class Player : MonoBehaviour, IPushable
 
         healthController.MaxResource = new Elysium.Utils.RefValue<int>(() => health);
         healthController.Fill();
+        healthController.OnDeath += Die;
+    }
+
+    private void Die()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void CreateEarthEffect()

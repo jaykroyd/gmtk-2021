@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
 {
@@ -18,6 +19,7 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
     [SerializeField] private float attackSpeed = 1f;
     [SerializeField] private RewardPackage reward = default;
     [SerializeField] private Reward rewardPrefab = default;
+    [SerializeField] private GameObject win = default;
 
     [Separator("Attacks", true)]
     [SerializeField] private FireGroundArea fireGround = default;
@@ -68,6 +70,8 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
         healthController.MaxResource = new RefValue<int>(() => health);
         healthController.OnDeath += Die;
         healthController.Fill();
+
+        win.SetActive(false);
 
         attacks = new IAttack[]
         {
@@ -193,7 +197,20 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
     {
         Anim.PlayAnimation("Death");
         DropScore();
-        Destroy(gameObject, 1f);
+        Tools.Invoke(this, () => gameObject.SetActive(false), 1f);
+
+        var t = Timer.CreateTimer(4f, () => false, false);
+        t.OnEnd += Win;
+    }
+
+    private void Win()
+    {
+        win.SetActive(true);
+    }
+
+    public void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     private void DropScore()

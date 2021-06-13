@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4047621443985526854
 Transform:
   m_ObjectHideFlags: 0
@@ -119,7 +119,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4047621445447015883}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.89, z: 0}
+  m_LocalPosition: {x: 0, y: 0.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8824761388657232016}
@@ -139,7 +139,7 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: -1.13}
-  m_Size: {x: 4.34, y: 4.42}
+  m_Size: {x: 4.34, y: 7.64}
   m_Direction: 0
 --- !u!114 &4047621445447015886
 MonoBehaviour:
@@ -210,7 +210,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8824761387874420847}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.09, z: 0}
+  m_LocalPosition: {x: 0, y: 3.61, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8824761388657232016}
@@ -242,7 +242,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8824761388657232024}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1.41, y: 3.43, z: 0}
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_Children:
@@ -271,11 +271,14 @@ MonoBehaviour:
   health: 1000
   damage: 10
   attackInterval: 5
+  attackSpeed: 1
   reward:
     Score: 20
+    Spirit: 0
   rewardPrefab: {fileID: 5849985969363822595, guid: 45f91323079fcdf4f8282cfd4f33f282, type: 3}
+  win: {fileID: 0}
   fireGround: {fileID: 0}
-  projectileTargetted: {fileID: 3626240859939841679, guid: cc2924e2e8322e442b2fb64d944b229b, type: 3}
+  poofEffect: {fileID: 115174, guid: 3c2fb72925d7f3c4a8c2b92cc3a81390, type: 3}
   projectileDirectional: {fileID: -3926830488534400410, guid: dc2f82083ff67104f8abfa12970962c0, type: 3}
 --- !u!114 &8824761388657232022
 MonoBehaviour:
@@ -289,7 +292,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eda2cf93bec0e7949a4ae9f908029e39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MovementSpeed: 4
+  m_MovementSpeed: 3
   m_JumpForce: 90000
   m_MovementSmoothing: 0.05
   m_AirControl: 1
@@ -347,7 +350,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8824761389009923375}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.913, z: 0}
+  m_LocalPosition: {x: 0, y: -4.24, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8824761388657232016}
