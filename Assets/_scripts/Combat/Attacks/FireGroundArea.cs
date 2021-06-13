@@ -3,6 +3,7 @@ using Elysium.Utils.Timers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class FireGroundArea : MonoBehaviour
@@ -21,6 +22,7 @@ public class FireGroundArea : MonoBehaviour
     {
         collider = GetComponent<Collider>();
         CollidersInArea = new List<Collider2D>();
+        gameObject.SetActive(false);
     }
 
     public void Enable(IDamageDealer _caster, float _damageMultiplier)
@@ -32,6 +34,7 @@ public class FireGroundArea : MonoBehaviour
 
     private void Update()
     {
+        tickTimer -= Time.deltaTime;
         if (tickTimer <= 0)
         {
             tickTimer = tickInterval;
@@ -56,11 +59,14 @@ public class FireGroundArea : MonoBehaviour
 
     private void Tick()
     {
+        if (caster == null) { return; }
+
         foreach (var col in CollidersInArea)
         {
             var damageable = col.GetComponentInChildren<IDamageable>();
             if (damageable != null)
             {
+                if (!caster.DealsDamageToTeams.Contains(damageable.Team)) { continue; }
                 damageable.TakeDamage(caster, Mathf.CeilToInt(caster.Damage.Value * damageMultiplier), "Fire");
             }
         }
