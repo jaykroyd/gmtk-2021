@@ -33,7 +33,7 @@
         "com.elysium.core": "1.0.0",
         "com.unity.textmeshpro": "2.1.4"
       },
-      "hash": "d21ad2e74b9963203288152a65d8081f33c47bee"
+      "hash": "fd0cb99bc3491b90807c7fc82b00fecf152c9da3"
     },
     "com.elysium.ui.progressbar": {
       "version": "https://github.com/byyjoww/Elysium.UI.ProgressBar.git",
