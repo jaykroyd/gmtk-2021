@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activationTime: 0.7
-  spirit: 3
+  spirit: 5
 --- !u!50 &-2466645914170227612
 Rigidbody2D:
   serializedVersion: 4

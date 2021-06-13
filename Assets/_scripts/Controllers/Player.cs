@@ -101,7 +101,6 @@ public class Player : MonoBehaviour, IPushable
         Anim = GetComponentInChildren<ModelController>();
         boss = FindObjectOfType<Boss>();
 
-        CreateFireEffect();
         healthController.MaxResource = new Elysium.Utils.RefValue<int>(() => health);
         healthController.Fill();
     }
@@ -192,7 +191,7 @@ public class Player : MonoBehaviour, IPushable
 
     protected virtual void Update()
     {
-        bossBar.gameObject.SetActive(Vector2.Distance(transform.position, boss.transform.position) < 20f);
+        if (boss != null) { bossBar.gameObject.SetActive(Vector2.Distance(transform.position, boss.transform.position) < 20f); }        
 
         if (Destination.HasValue) { AutomaticallyMoveToDestination(); }
         else { MoveBasedOnInput(); }
