@@ -30,6 +30,7 @@ public class Player : MonoBehaviour, IPushable
     private Collider collider = default;
     private HealthController healthController = default;
     private Boss boss = default;
+    private SpriteRenderer renderer = default;
 
     bool isAiming = false;   
     public bool airJump = false; 
@@ -72,7 +73,7 @@ public class Player : MonoBehaviour, IPushable
     public Rigidbody2D Rigidbody => rb;
     public Movement Movement => movement;
     public HealthController HealthController => healthController;
-    public Vector2? Destination { get; set; }
+    public Vector2? Destination { get; set; }    
 
     public void Push(float _force, Vector2 _direction)
     {
@@ -92,6 +93,9 @@ public class Player : MonoBehaviour, IPushable
     public void ActivateCollisions(bool _active)
     {
         gameObject.layer = _active ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("Intangible");
+        var c = renderer.color;
+        c.a = _active ? 1f : 0.3f;
+        renderer.color = c;
     }
 
     public void ReceiveReward(RewardPackage _reward)
@@ -108,6 +112,7 @@ public class Player : MonoBehaviour, IPushable
         healthController = GetComponent<HealthController>();
         Anim = GetComponentInChildren<ModelController>();
         boss = FindObjectOfType<Boss>();
+        renderer = GetComponentInChildren<SpriteRenderer>();
 
         healthController.MaxResource = new Elysium.Utils.RefValue<int>(() => health);
         healthController.Fill();
