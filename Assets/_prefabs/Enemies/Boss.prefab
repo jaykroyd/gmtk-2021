@@ -268,15 +268,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   input: {x: 0, y: 0}
-  health: 1
+  health: 100
   damage: 10
   attackInterval: 5
   attackSpeed: 1
+  engageRange: 20
   reward:
     Score: 20
     Spirit: 0
   rewardPrefab: {fileID: 5849985969363822595, guid: 45f91323079fcdf4f8282cfd4f33f282, type: 3}
   win: {fileID: 0}
+  playerScore: {fileID: 0}
   fireGround: {fileID: 0}
   poofEffect: {fileID: 115174, guid: 3c2fb72925d7f3c4a8c2b92cc3a81390, type: 3}
   projectileDirectional: {fileID: -3926830488534400410, guid: dc2f82083ff67104f8abfa12970962c0, type: 3}
@@ -425,13 +427,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5b210609803658e488f512fc13a6163e, type: 3}
---- !u!1 &4048603862022097289 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1000011821036864, guid: 5b210609803658e488f512fc13a6163e, type: 3}
-  m_PrefabInstance: {fileID: 4047621445785173193}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4044865505595652085 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4000011826580284, guid: 5b210609803658e488f512fc13a6163e, type: 3}
+  m_PrefabInstance: {fileID: 4047621445785173193}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &4048603862022097289 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1000011821036864, guid: 5b210609803658e488f512fc13a6163e, type: 3}
   m_PrefabInstance: {fileID: 4047621445785173193}
   m_PrefabAsset: {fileID: 0}
