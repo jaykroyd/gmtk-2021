@@ -228,23 +228,7 @@ public class Player : MonoBehaviour, IPushable
             isAiming = true;
         }
 
-        if (waterEffect != null && !ethereal.IsActive && waterEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha2)) 
-        { 
-            selectedEffect = waterEffect;
-            DeactivateAllHotbars();
-            waterHotbar.Highlight(true);
-            isAiming = true;
-        }
-
-        if (windEffect != null && !ethereal.IsActive && windEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha3))
-        { 
-            selectedEffect = windEffect;
-            DeactivateAllHotbars();
-            windHotbar.Highlight(true);
-            isAiming = true;
-        }
-
-        if (vineEffect != null && !ethereal.IsActive && vineEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha4)) 
+        if (vineEffect != null && !ethereal.IsActive && vineEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha2)) 
         { 
             selectedEffect = vineEffect;
             DeactivateAllHotbars();
@@ -252,13 +236,31 @@ public class Player : MonoBehaviour, IPushable
             isAiming = true;
         }
 
-        if (earthEffect != null && !ethereal.IsActive && earthEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha5))
+        if (earthEffect != null && !ethereal.IsActive && earthEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha3))
         {
             selectedEffect = earthEffect;
             DeactivateAllHotbars();
             earthHotbar.Highlight(true);
             isAiming = true;
         }
+
+        if (waterEffect != null && !ethereal.IsActive && waterEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha4)) 
+        { 
+            selectedEffect = waterEffect;
+            DeactivateAllHotbars();
+            waterHotbar.Highlight(true);
+            isAiming = true;
+        }
+
+        if (windEffect != null && !ethereal.IsActive && windEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha5))
+        { 
+            selectedEffect = windEffect;
+            DeactivateAllHotbars();
+            windHotbar.Highlight(true);
+            isAiming = true;
+        }
+
+
     }
 
     private void AutomaticallyMoveToDestination()

@@ -146,7 +146,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   input: {x: 0, y: 0}
-  health: 80
+  health: 20
   damage: 20
   wanderCooldown: 2
   aggroRange: 8
