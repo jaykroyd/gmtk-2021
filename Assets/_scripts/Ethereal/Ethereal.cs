@@ -26,7 +26,7 @@ public class Ethereal : MonoBehaviour
     public SpectralLink Link { get; private set; }
     public ModelController Anim { get; set; }
     public float MaxDistance => maxDistance;
-    public Movement Movement => Movement;
+    public Movement Movement => movement;
 
     public event UnityAction OnDestinationArrival;
     public event UnityAction OnPlayerArrival;
