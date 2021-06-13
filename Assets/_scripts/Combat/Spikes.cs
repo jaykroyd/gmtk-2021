@@ -9,7 +9,9 @@ using UnityEngine;
 
 public class Spikes : MonoBehaviour, IDamageDealer
 {
+    [SerializeField] int damage = 1000;
     [SerializeField] DamageTeam[] dealsDamageToTeams;
+
     public RefValue<int> Damage { get; set; } = new RefValue<int>(() => 100);
     public DamageTeam[] DealsDamageToTeams => dealsDamageToTeams;
     public GameObject DamageDealerObject => gameObject;
@@ -21,6 +23,7 @@ public class Spikes : MonoBehaviour, IDamageDealer
     private void Awake()
     {
         TargetsInCollider = new List<IDamageable>();
+        Damage = new RefValue<int>(() => damage);        
         var tickInterval = 1f;
 
         tickTimer = Timer.CreateTimer(tickInterval, () => !this, true);
