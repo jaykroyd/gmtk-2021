@@ -46,6 +46,7 @@ public class Spikes : MonoBehaviour, IDamageDealer
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        Debug.Log("Entered Spikes");
         var damageable = collision.collider.transform.root.GetComponentInChildren<IDamageable>();
         if (damageable != null && dealsDamageToTeams.Contains(damageable.Team))
         {
@@ -55,6 +56,7 @@ public class Spikes : MonoBehaviour, IDamageDealer
 
     private void OnCollisionExit2D(Collision2D collision)
     {
+        Debug.Log("Left Spikes");
         var damageable = collision.collider.transform.root.GetComponentInChildren<IDamageable>();
         if (damageable != null && dealsDamageToTeams.Contains(damageable.Team))
         {
