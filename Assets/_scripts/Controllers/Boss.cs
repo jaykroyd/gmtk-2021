@@ -17,6 +17,7 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
     [SerializeField] private int damage = 10;
     [SerializeField] private float attackInterval = 5f;
     [SerializeField] private float attackSpeed = 1f;
+    [SerializeField] private float engageRange = 20f;
     [SerializeField] private RewardPackage reward = default;
     [SerializeField] private Reward rewardPrefab = default;
     [SerializeField] private GameObject win = default;
@@ -40,7 +41,7 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
     private Player player = default;
     private TimerInstance jumpTimer = default;
     private TimerInstance attackTimer = default;
-    private TimerInstance attackingTimer = default;
+    private TimerInstance attackingTimer = default;    
 
     public IModelController Anim { get; set; }
     public RefValue<int> Damage { get; set; } = new RefValue<int>(() => 1);
@@ -86,7 +87,7 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
         
     private void Update()
     {
-        if (healthController.IsDead || target == null || target.IsDead) { return; }
+        if (healthController.IsDead || target == null || target.IsDead || Vector2.Distance(target.DamageableObject.transform.position, transform.position) > engageRange) { return; }
 
         if (attackingTimer.IsEnded) { destination = target.DamageableObject.transform.position; }
 
@@ -226,5 +227,11 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
     public void CriticalHit()
     {
 
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.black;
+        Gizmos.DrawWireSphere(transform.position, engageRange);
     }
 }
