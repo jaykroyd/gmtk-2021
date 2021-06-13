@@ -17,7 +17,10 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
     [SerializeField] private float attackInterval = 5f;
     [SerializeField] private RewardPackage reward = default;
     [SerializeField] private Reward rewardPrefab = default;
-    
+
+    [Separator("Attacks", true)]
+    [SerializeField] private FireGroundArea fireGround = default;
+
     private Vector2? destination = null;
     private IDamageable target = null;
     private IAttack[] attacks = default;
@@ -38,6 +41,8 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
 
     public DamageTeam[] DealsDamageToTeams => new DamageTeam[] { DamageTeam.PLAYER };
     public GameObject DamageDealerObject => gameObject;
+
+    private IAttack PreviousAttack { get; set; }
     private IAttack SelectedAttack { get; set; }   
 
     private void Awake()
@@ -60,7 +65,7 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
 
         attacks = new IAttack[]
         {
-
+            new FireGroundAttack(fireGround, 5f),
         };
     }
 
@@ -70,9 +75,11 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
 
         if (SelectedAttack == null) { PickNextAttack(); }
 
-        if(SelectedAttack != null)
+        if (SelectedAttack != null)
         {
             SelectedAttack.Attack(this, null);
+            PreviousAttack = SelectedAttack;
+            SelectedAttack = null;
             input = Vector2.zero;
         }
         else if (destination.HasValue)
@@ -101,9 +108,25 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
     {
         if (!attackTimer.IsEnded) { return; }
 
+        if (attacks.Length < 1)
+        {
+            // Debug.LogError($"No attacks setup");
+            return;
+        }
+
+        List<IAttack> availableAttacks = new List<IAttack>(attacks);
+        if (PreviousAttack != null) { availableAttacks.Remove(PreviousAttack); }
+        if (availableAttacks.Count < 1) 
+        {
+            // Debug.LogError($"No available attacks");
+            return; 
+        }
+
+        int r = Random.Range(0, availableAttacks.Count);        
+        SelectedAttack = availableAttacks[r];
         attackTimer.SetTime(attackInterval);
-        SelectedAttack = null;
-        Debug.LogError($"Selected new attack: "+ SelectedAttack);        
+
+        Debug.Log($"Selected new attack: "+ SelectedAttack);
     }
 
     private void WaitAndAcquireNewPosition()
