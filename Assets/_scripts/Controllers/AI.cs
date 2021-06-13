@@ -46,7 +46,7 @@ public class AI : MonoBehaviour, IPushable, IDamageDealer, IAttacker
         rb = GetComponent<Rigidbody2D>();
         movement = GetComponent<Movement>();
         healthController = GetComponentInChildren<HealthController>();
-        Anim = GetComponent<IModelController>();
+        Anim = GetComponentInChildren<IModelController>();
         player = FindObjectOfType<Player>();
 
         wanderTimer = wanderCooldown;

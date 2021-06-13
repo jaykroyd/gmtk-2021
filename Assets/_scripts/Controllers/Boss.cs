@@ -9,7 +9,7 @@ using UnityEngine;
 
 public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
 {
-    private const float INITIAL_ATTACK_TIMER_DELAY = 0f;
+    private const float INITIAL_ATTACK_TIMER_DELAY = 2f;
 
     [SerializeField, ReadOnly] private Vector2 input = Vector2.zero;
     [SerializeField] private int health = 100;
@@ -21,7 +21,7 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
 
     [Separator("Attacks", true)]
     [SerializeField] private FireGroundArea fireGround = default;
-    [SerializeField] private GenericProjectile projectileTargetted = default;
+    [SerializeField] private GameObject poofEffect = default;
     [SerializeField] private GenericProjectile projectileDirectional = default;
 
     private Vector2? destination = null;
@@ -70,9 +70,9 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
         healthController.Fill();
 
         attacks = new IAttack[]
-        {            
+        {
             new FireGroundAttack(fireGround, 7f, 1f),
-            // new ProjectileAttack(Mathf.Infinity, projectileTargetted, 1f),
+            new TeleportToBackAttack(Mathf.Infinity, poofEffect),
             new DirectionalProjectileAttack(Mathf.Infinity, projectileDirectional, 1f),
             new CircularAOEProjectileAttack(Mathf.Infinity, projectileDirectional, 1f, 16),
         };
