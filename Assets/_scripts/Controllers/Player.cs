@@ -48,6 +48,12 @@ public class Player : MonoBehaviour, IPushable
     [SerializeField] UI_HotbarSlot earthHotbar = null;
     [SerializeField] UI_ProgressBar bossBar = null;
 
+    [SerializeField] GameObject firesoulpopup = null;
+    [SerializeField] GameObject watersoulpopup = null;
+    [SerializeField] GameObject windsoulpopup = null;
+    [SerializeField] GameObject vinesoulpopup = null;
+    [SerializeField] GameObject earthsoulpopup = null;
+
     [Separator("Particles", true)]
     [SerializeField] GameObject[] particles = new GameObject[4];
 
@@ -106,6 +112,12 @@ public class Player : MonoBehaviour, IPushable
         healthController.MaxResource = new Elysium.Utils.RefValue<int>(() => health);
         healthController.Fill();
         healthController.OnDeath += Die;
+
+        firesoulpopup.gameObject.SetActive(false);
+        watersoulpopup.gameObject.SetActive(false);
+        earthsoulpopup.gameObject.SetActive(false);
+        windsoulpopup.gameObject.SetActive(false);
+        vinesoulpopup.gameObject.SetActive(false);
     }
 
     private void Die()
@@ -134,6 +146,7 @@ public class Player : MonoBehaviour, IPushable
                     4f
                     );
         earthHotbar.SetupCooldownBar(earthEffect as IFillable);
+        earthsoulpopup.SetActive(true);
     }
 
     public void CreateVineEffect()
@@ -148,6 +161,7 @@ public class Player : MonoBehaviour, IPushable
                     4f
                     );
         vineHotbar.SetupCooldownBar(vineEffect as IFillable);
+        vinesoulpopup.SetActive(true);
     }
 
     public void CreateWindEffect()
@@ -165,6 +179,7 @@ public class Player : MonoBehaviour, IPushable
                     36000f
                     );
         windHotbar.SetupCooldownBar(windEffect as IFillable);
+        windsoulpopup.SetActive(true);
     }
 
     public void CreateWaterEffect()
@@ -181,6 +196,7 @@ public class Player : MonoBehaviour, IPushable
                     healEffectTick
                     );
         waterHotbar.SetupCooldownBar(waterEffect as IFillable);
+        watersoulpopup.SetActive(true);
     }
 
     public void CreateFireEffect()
@@ -199,6 +215,7 @@ public class Player : MonoBehaviour, IPushable
                     fireExplosionTick
                     );
         fireHotbar.SetupCooldownBar(fireEffect as IFillable);
+        firesoulpopup.SetActive(true);
     }
 
     protected virtual void Start()

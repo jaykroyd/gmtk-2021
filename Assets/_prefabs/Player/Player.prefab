@@ -1557,6 +1557,11 @@ MonoBehaviour:
   vineHotbar: {fileID: 0}
   earthHotbar: {fileID: 0}
   bossBar: {fileID: 0}
+  firesoulpopup: {fileID: 0}
+  watersoulpopup: {fileID: 0}
+  windsoulpopup: {fileID: 0}
+  vinesoulpopup: {fileID: 0}
+  earthsoulpopup: {fileID: 0}
   particles:
   - {fileID: 3155288569475430670}
   - {fileID: 3155288571012685354}
