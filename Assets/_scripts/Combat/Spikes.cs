@@ -38,8 +38,9 @@ public class Spikes : MonoBehaviour, IDamageDealer
 
     private void Tick()
     {
-        foreach (var dmg in TargetsInCollider)
+        for (int i = 0; i < TargetsInCollider.Count; i++)
         {
+            var dmg = TargetsInCollider[i];
             Debug.LogError($"dealing damage from spikes to {dmg.DamageableObject.name}");
             dmg.TakeDamage(this, Damage.Value, "Spike");
         }
@@ -52,6 +53,7 @@ public class Spikes : MonoBehaviour, IDamageDealer
         if (damageable != null && dealsDamageToTeams.Contains(damageable.Team))
         {
             TargetsInCollider.Add(damageable);
+            damageable.TakeDamage(this, Damage.Value, "Spike");
         }
     }
 

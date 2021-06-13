@@ -20,6 +20,7 @@ public class Player : MonoBehaviour, IPushable
     [SerializeField] private float enemyPushForce = 36000f;
     [SerializeField] private Ethereal ethereal;
     [SerializeField] private LongValueSO playerScore = default;
+    [SerializeField] private GameObject deathAnim = default;
     [RequireInterface(typeof(IRangeIndicator))]
     [SerializeField] private UnityEngine.Object[] indicators = new UnityEngine.Object[0];
 
@@ -109,7 +110,15 @@ public class Player : MonoBehaviour, IPushable
 
     private void Die()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        Instantiate(deathAnim, transform.position, deathAnim.transform.rotation);
+
+        var dt = Timer.CreateTimer(1f, () => !this, false);
+        dt.OnEnd += () =>
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        };
+
+        gameObject.SetActive(false);
     }
 
     public void CreateEarthEffect()
@@ -261,9 +270,12 @@ public class Player : MonoBehaviour, IPushable
         {
             Destination = null;
             lastKnownPos = null;
-            collisionTimer.End();
-            collisionTimer.Dispose();
-            collisionTimer = null;
+            if (collisionTimer != null)
+            {
+                collisionTimer.End();
+                collisionTimer.Dispose();
+                collisionTimer = null;
+            }
             rb.velocity = Vector2.zero;
             movement.MoveSpeed = 10f;
             ethereal.InvokePlayerArrival();
