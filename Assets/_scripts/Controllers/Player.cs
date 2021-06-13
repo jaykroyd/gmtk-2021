@@ -325,14 +325,14 @@ public class Player : MonoBehaviour, IPushable
 
     private void OnCollisionEnter2D(Collision2D _collision)
     {
-        var dealer = _collision.collider.transform.root.GetComponentInChildren<IDamageDealer>();
-        if (dealer != null)
-        {
-            Vector2 direction = (Vector2)ethereal.transform.position - (Vector2)_collision.collider.transform.position;
-            healthController.TakeDamage(dealer, dealer.Damage.Value);
-            Push(enemyPushForce, direction.normalized);
-            Anim.PlayAnimation("Hit");
-        }
+        //var dealer = _collision.collider.transform.root.GetComponentInChildren<IDamageDealer>();
+        //if (dealer != null)
+        //{
+        //    Vector2 direction = (Vector2)ethereal.transform.position - (Vector2)_collision.collider.transform.position;
+        //    healthController.TakeDamage(dealer, dealer.Damage.Value);
+        //    Push(enemyPushForce, direction.normalized);
+        //    Anim.PlayAnimation("Hit");
+        //}
     }
 
     Vector2? lastKnownPos = null;
