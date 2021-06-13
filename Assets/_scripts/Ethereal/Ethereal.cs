@@ -26,6 +26,7 @@ public class Ethereal : MonoBehaviour
     public SpectralLink Link { get; private set; }
     public ModelController Anim { get; set; }
     public float MaxDistance => maxDistance;
+    public Movement Movement => Movement;
 
     public event UnityAction OnDestinationArrival;
     public event UnityAction OnPlayerArrival;
@@ -116,13 +117,17 @@ public class Ethereal : MonoBehaviour
         }
     }
 
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         effect.OnCollide(other);
 
-        if (other.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        if (Destination == null) { return; }
+
+        bool isInLayer = movement.WhatIsGround.value == (movement.WhatIsGround.value | (1 << other.gameObject.layer));
+        // !Physics.GetIgnoreLayerCollision(gameObject.layer, other.gameObject.layer)
+        if (isInLayer)
         {            
-            if (Destination == null) { return; }
             Stop();
             OnDestinationArrival?.Invoke();            
         }

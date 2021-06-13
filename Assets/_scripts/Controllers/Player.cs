@@ -27,7 +27,8 @@ public class Player : MonoBehaviour, IPushable
     private Collider collider = default;
     private HealthController healthController = default;
 
-    bool isAiming = false;    
+    bool isAiming = false;   
+    public bool airJump = false; 
 
     private IEtherealEffect fireEffect = null;
     private IEtherealEffect waterEffect = null;
@@ -246,6 +247,11 @@ public class Player : MonoBehaviour, IPushable
         if (Input.GetKeyDown(KeyCode.Space))
         {
             y = 1;
+            if(airJump) 
+            {
+                movement.IsGrounded = true;
+                airJump = false;
+            }
         }
 
         input = new Vector2(x, y);
