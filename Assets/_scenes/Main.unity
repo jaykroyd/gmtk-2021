@@ -796,6 +796,10 @@ PrefabInstance:
       propertyPath: fireGround
       value: 
       objectReference: {fileID: 1071108876}
+    - target: {fileID: 8824761388657232027, guid: a7949735014efe0458abcfa96509e772, type: 3}
+      propertyPath: playerScore
+      value: 
+      objectReference: {fileID: 11400000, guid: d20e23729a76ff44eb8d6aa2599eedfc, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a7949735014efe0458abcfa96509e772, type: 3}
 --- !u!114 &639871863 stripped

@@ -118,6 +118,7 @@ public class Player : MonoBehaviour, IPushable
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         };
 
+        playerScore.Value = 0;
         gameObject.SetActive(false);
     }
 

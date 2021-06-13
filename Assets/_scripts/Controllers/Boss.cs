@@ -1,4 +1,5 @@
 using Elysium.Combat;
+using Elysium.Core;
 using Elysium.Utils;
 using Elysium.Utils.Attributes;
 using Elysium.Utils.Timers;
@@ -21,6 +22,7 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
     [SerializeField] private RewardPackage reward = default;
     [SerializeField] private Reward rewardPrefab = default;
     [SerializeField] private GameObject win = default;
+    [SerializeField] private LongValueSO playerScore = default;
 
     [Separator("Attacks", true)]
     [SerializeField] private FireGroundArea fireGround = default;
@@ -212,6 +214,7 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
     public void ReloadScene()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        playerScore.Value = 0;
     }
 
     private void DropScore()
