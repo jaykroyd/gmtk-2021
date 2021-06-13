@@ -9,6 +9,7 @@ using UnityEngine;
 public class FireGroundArea : MonoBehaviour
 {
     [SerializeField] private float damageMultiplier = 1f;
+    [SerializeField] private GameObject explosion = default;
 
     private Collider collider = default;    
     private float tickInterval = 1f;
@@ -68,6 +69,7 @@ public class FireGroundArea : MonoBehaviour
             {
                 if (!caster.DealsDamageToTeams.Contains(damageable.Team)) { continue; }
                 damageable.TakeDamage(caster, Mathf.CeilToInt(caster.Damage.Value * damageMultiplier), "Fire");
+                GameObject.Instantiate(explosion, damageable.DamageableObject.transform);
             }
         }
     }

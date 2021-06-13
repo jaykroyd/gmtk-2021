@@ -2,6 +2,7 @@ using Elysium.Combat;
 using Elysium.Core;
 using Elysium.UI.ProgressBar;
 using Elysium.Utils.Attributes;
+using Elysium.Utils.Timers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -232,6 +233,10 @@ public class Player : MonoBehaviour, IPushable
         if (Vector2.Distance((Vector2)transform.position, Destination.Value) < 1.5f)
         {
             Destination = null;
+            lastKnownPos = null;
+            collisionTimer.End();
+            collisionTimer.Dispose();
+            collisionTimer = null;
             rb.velocity = Vector2.zero;
             movement.MoveSpeed = 10f;
             ethereal.InvokePlayerArrival();
@@ -303,13 +308,29 @@ public class Player : MonoBehaviour, IPushable
         }
     }
 
+    Vector2? lastKnownPos = null;
+    TimerInstance collisionTimer = null;
     private void OnCollisionStay2D(Collision2D _collision)
     {
         bool isInLayer = Movement.WhatIsGround.value == (Movement.WhatIsGround.value | (1 << _collision.gameObject.layer));
         if (Destination.HasValue && isInLayer)
         {
-            Destination = null;
-            ethereal.ForceRetrieve(this);
+            if (!lastKnownPos.HasValue)
+            {
+                lastKnownPos = transform.position;
+                collisionTimer = Timer.CreateTimer(0.2f, () => false, false);
+                return;
+            }
+
+            if (lastKnownPos == transform.position && collisionTimer != null && collisionTimer.IsEnded)
+            {
+                Destination = null;
+                lastKnownPos = null;
+                collisionTimer.End();
+                collisionTimer.Dispose();
+                collisionTimer = null;
+                ethereal.ForceRetrieve(this);
+            }            
         }
     }
 }

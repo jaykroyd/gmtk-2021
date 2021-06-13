@@ -9,7 +9,7 @@ using UnityEngine;
 
 public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
 {
-    private const float INITIAL_ATTACK_TIMER_DELAY = 10f;
+    private const float INITIAL_ATTACK_TIMER_DELAY = 0f;
 
     [SerializeField, ReadOnly] private Vector2 input = Vector2.zero;
     [SerializeField] private int health = 100;
@@ -20,6 +20,8 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
 
     [Separator("Attacks", true)]
     [SerializeField] private FireGroundArea fireGround = default;
+    [SerializeField] private GenericProjectile projectileTargetted = default;
+    [SerializeField] private GenericProjectile projectileDirectional = default;
 
     private Vector2? destination = null;
     private IDamageable target = null;
@@ -50,7 +52,7 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
         rb = GetComponent<Rigidbody2D>();
         movement = GetComponent<Movement>();
         healthController = GetComponentInChildren<HealthController>();
-        Anim = GetComponent<IModelController>();
+        Anim = GetComponentInChildren<IModelController>();
         player = FindObjectOfType<Player>();
         target = player.GetComponentInChildren<IDamageable>();
 
@@ -65,7 +67,10 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
 
         attacks = new IAttack[]
         {
-            new FireGroundAttack(fireGround, 5f, 1f),
+            new FireGroundAttack(fireGround, 7f, 1f),
+            // new ProjectileAttack(Mathf.Infinity, projectileTargetted, 1f),
+            new DirectionalProjectileAttack(Mathf.Infinity, projectileDirectional, 1f),
+            new CircularAOEProjectileAttack(Mathf.Infinity, projectileDirectional, 1f, 16),
         };
     }
 
@@ -77,7 +82,7 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
 
         if (SelectedAttack != null)
         {
-            SelectedAttack.Attack(this, null);
+            SelectedAttack.Attack(this, target);
             PreviousAttack = SelectedAttack;
             SelectedAttack = null;
             input = Vector2.zero;
