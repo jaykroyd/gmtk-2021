@@ -65,7 +65,7 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
 
         attacks = new IAttack[]
         {
-            new FireGroundAttack(fireGround, 5f),
+            new FireGroundAttack(fireGround, 5f, 1f),
         };
     }
 
