@@ -4,6 +4,7 @@ using Elysium.Utils.Attributes;
 using Elysium.Utils.Timers;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
@@ -29,7 +30,8 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
     private HealthController healthController = default;
     private Player player = default;
     private TimerInstance jumpTimer = default;
-    private TimerInstance attackTimer = default;    
+    private TimerInstance attackTimer = default;
+    private LayerMask[] groundLayers = default;
 
     public IModelController Anim { get; set; }
     public RefValue<int> Damage { get; set; } = new RefValue<int>(() => 1);
@@ -41,6 +43,11 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
 
     private void Awake()
     {
+        groundLayers = new LayerMask[]
+        {
+            LayerMask.NameToLayer("Ground")
+        };
+
         rb = GetComponent<Rigidbody2D>();
         movement = GetComponent<Movement>();
         healthController = GetComponentInChildren<HealthController>();
@@ -120,7 +127,7 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
             {
                 foreach (var hit in hits)
                 {
-                    if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Ground"))
+                    if (groundLayers.Contains(hit.collider.gameObject.layer))
                     {
                         jumpTimer.SetTime(jumpCooldown);
                         input.y = 1;

@@ -5,6 +5,7 @@ using Elysium.Utils.Attributes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -25,6 +26,7 @@ public class Player : MonoBehaviour, IPushable
     private Rigidbody2D rb = default;
     private Collider collider = default;
     private HealthController healthController = default;
+    private LayerMask[] groundLayers = default;
 
     bool isAiming = false;    
 
@@ -95,6 +97,12 @@ public class Player : MonoBehaviour, IPushable
         collider = GetComponentInChildren<Collider>();
         healthController = GetComponent<HealthController>();
         Anim = GetComponentInChildren<ModelController>();
+
+        groundLayers = new LayerMask[]
+        {
+            LayerMask.NameToLayer("Ground"),
+            LayerMask.NameToLayer("Platforms"),
+        };
 
         fireEffect = new FireEffect(
             this,
@@ -298,7 +306,7 @@ public class Player : MonoBehaviour, IPushable
 
     private void OnCollisionStay2D(Collision2D _collision)
     {
-        if (Destination.HasValue && _collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        if (Destination.HasValue && groundLayers.Contains(_collision.gameObject.layer))
         {
             Destination = null;
             ethereal.ForceRetrieve(this);
