@@ -2,6 +2,7 @@ using Elysium.Combat;
 using Elysium.Core;
 using Elysium.UI.ProgressBar;
 using Elysium.Utils.Attributes;
+using Elysium.Utils.Timers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ public class Player : MonoBehaviour, IPushable
     private Rigidbody2D rb = default;
     private Collider collider = default;
     private HealthController healthController = default;
+    private Boss boss = default;
 
     bool isAiming = false;   
     public bool airJump = false; 
@@ -42,6 +44,7 @@ public class Player : MonoBehaviour, IPushable
     [SerializeField] UI_HotbarSlot windHotbar = null;
     [SerializeField] UI_HotbarSlot vineHotbar = null;
     [SerializeField] UI_HotbarSlot earthHotbar = null;
+    [SerializeField] UI_ProgressBar bossBar = null;
 
     [Separator("Particles", true)]
     [SerializeField] GameObject[] particles = new GameObject[4];
@@ -96,73 +99,90 @@ public class Player : MonoBehaviour, IPushable
         collider = GetComponentInChildren<Collider>();
         healthController = GetComponent<HealthController>();
         Anim = GetComponentInChildren<ModelController>();
+        boss = FindObjectOfType<Boss>();
 
-        fireEffect = new FireEffect(
-            this,
-            ethereal, 
-            Color.red, 
-            Color.red, 
-            0,
-            Ethereal.BASE_TIME_IN_FORM,
-            2f,
-            10f, 
-            5f,
-            fireExplosionHit, 
-            fireExplosionTick
-            );
-        fireHotbar.SetupCooldownBar(fireEffect as IFillable);
-
-        waterEffect = new WaterEffect(
-            this,
-            ethereal,
-            Color.blue,
-            Color.blue,
-            1,
-            Ethereal.BASE_TIME_IN_FORM,
-            5f,
-            heal,
-            healEffectTick
-            );
-        waterHotbar.SetupCooldownBar(waterEffect as IFillable);
-
-        windEffect = new WindEffect(
-            this, 
-            ethereal, 
-            Color.gray, 
-            Color.gray, 
-            2,
-            Ethereal.BASE_TIME_IN_FORM,
-            7f,
-            -2f, 
-            7f,
-            36000f
-            );
-        windHotbar.SetupCooldownBar(windEffect as IFillable);
-
-        vineEffect = new VineEffect(
-            this, 
-            ethereal, 
-            Color.green, 
-            Color.green, 
-            3,
-            Ethereal.BASE_TIME_IN_FORM,
-            4f
-            );
-        vineHotbar.SetupCooldownBar(vineEffect as IFillable);
-
-        earthEffect = new EarthEffect(
-            this,
-            ethereal,
-            new Color32(117, 59, 11, 100),
-            new Color32(117, 59, 11, 255),
-            4,
-            Ethereal.BASE_TIME_IN_FORM,
-            4f
-            );
-        earthHotbar.SetupCooldownBar(earthEffect as IFillable);
-
+        CreateFireEffect();
         healthController.MaxResource = new Elysium.Utils.RefValue<int>(() => health);
         healthController.Fill();
+    }
+
+    public void CreateEarthEffect()
+    {
+        earthEffect = new EarthEffect(
+                    this,
+                    ethereal,
+                    new Color32(117, 59, 11, 100),
+                    new Color32(117, 59, 11, 255),
+                    4,
+                    Ethereal.BASE_TIME_IN_FORM,
+                    4f
+                    );
+        earthHotbar.SetupCooldownBar(earthEffect as IFillable);
+    }
+
+    public void CreateVineEffect()
+    {
+        vineEffect = new VineEffect(
+                    this,
+                    ethereal,
+                    Color.green,
+                    Color.green,
+                    3,
+                    Ethereal.BASE_TIME_IN_FORM,
+                    4f
+                    );
+        vineHotbar.SetupCooldownBar(vineEffect as IFillable);
+    }
+
+    public void CreateWindEffect()
+    {
+        windEffect = new WindEffect(
+                    this,
+                    ethereal,
+                    Color.gray,
+                    Color.gray,
+                    2,
+                    Ethereal.BASE_TIME_IN_FORM,
+                    7f,
+                    -2f,
+                    7f,
+                    36000f
+                    );
+        windHotbar.SetupCooldownBar(windEffect as IFillable);
+    }
+
+    public void CreateWaterEffect()
+    {
+        waterEffect = new WaterEffect(
+                    this,
+                    ethereal,
+                    Color.blue,
+                    Color.blue,
+                    1,
+                    Ethereal.BASE_TIME_IN_FORM,
+                    5f,
+                    heal,
+                    healEffectTick
+                    );
+        waterHotbar.SetupCooldownBar(waterEffect as IFillable);
+    }
+
+    public void CreateFireEffect()
+    {
+        fireEffect = new FireEffect(
+                    this,
+                    ethereal,
+                    Color.red,
+                    Color.red,
+                    0,
+                    Ethereal.BASE_TIME_IN_FORM,
+                    2f,
+                    10f,
+                    5f,
+                    fireExplosionHit,
+                    fireExplosionTick
+                    );
+        fireHotbar.SetupCooldownBar(fireEffect as IFillable);
     }
 
     protected virtual void Start()
@@ -172,6 +192,8 @@ public class Player : MonoBehaviour, IPushable
 
     protected virtual void Update()
     {
+        bossBar.gameObject.SetActive(Vector2.Distance(transform.position, boss.transform.position) < 20f);
+
         if (Destination.HasValue) { AutomaticallyMoveToDestination(); }
         else { MoveBasedOnInput(); }
 
@@ -183,7 +205,7 @@ public class Player : MonoBehaviour, IPushable
         }
 
         // Different Spirits
-        if (!ethereal.IsActive && fireEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha1))
+        if (fireEffect != null && !ethereal.IsActive && fireEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha1))
         { 
             selectedEffect = fireEffect;
             DeactivateAllHotbars();
@@ -191,7 +213,7 @@ public class Player : MonoBehaviour, IPushable
             isAiming = true;
         }
 
-        if (!ethereal.IsActive && waterEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha2)) 
+        if (waterEffect != null && !ethereal.IsActive && waterEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha2)) 
         { 
             selectedEffect = waterEffect;
             DeactivateAllHotbars();
@@ -199,7 +221,7 @@ public class Player : MonoBehaviour, IPushable
             isAiming = true;
         }
 
-        if (!ethereal.IsActive && windEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha3))
+        if (windEffect != null && !ethereal.IsActive && windEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha3))
         { 
             selectedEffect = windEffect;
             DeactivateAllHotbars();
@@ -207,7 +229,7 @@ public class Player : MonoBehaviour, IPushable
             isAiming = true;
         }
 
-        if (!ethereal.IsActive && vineEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha4)) 
+        if (vineEffect != null && !ethereal.IsActive && vineEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha4)) 
         { 
             selectedEffect = vineEffect;
             DeactivateAllHotbars();
@@ -215,7 +237,7 @@ public class Player : MonoBehaviour, IPushable
             isAiming = true;
         }
 
-        if (!ethereal.IsActive && earthEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha5))
+        if (earthEffect != null && !ethereal.IsActive && earthEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha5))
         {
             selectedEffect = earthEffect;
             DeactivateAllHotbars();
@@ -232,6 +254,10 @@ public class Player : MonoBehaviour, IPushable
         if (Vector2.Distance((Vector2)transform.position, Destination.Value) < 1.5f)
         {
             Destination = null;
+            lastKnownPos = null;
+            collisionTimer.End();
+            collisionTimer.Dispose();
+            collisionTimer = null;
             rb.velocity = Vector2.zero;
             movement.MoveSpeed = 10f;
             ethereal.InvokePlayerArrival();
@@ -303,13 +329,29 @@ public class Player : MonoBehaviour, IPushable
         }
     }
 
+    Vector2? lastKnownPos = null;
+    TimerInstance collisionTimer = null;
     private void OnCollisionStay2D(Collision2D _collision)
     {
         bool isInLayer = Movement.WhatIsGround.value == (Movement.WhatIsGround.value | (1 << _collision.gameObject.layer));
         if (Destination.HasValue && isInLayer)
         {
-            Destination = null;
-            ethereal.ForceRetrieve(this);
+            if (!lastKnownPos.HasValue)
+            {
+                lastKnownPos = transform.position;
+                collisionTimer = Timer.CreateTimer(0.2f, () => false, false);
+                return;
+            }
+
+            if (lastKnownPos == transform.position && collisionTimer != null && collisionTimer.IsEnded)
+            {
+                Destination = null;
+                lastKnownPos = null;
+                collisionTimer.End();
+                collisionTimer.Dispose();
+                collisionTimer = null;
+                ethereal.ForceRetrieve(this);
+            }            
         }
     }
 }

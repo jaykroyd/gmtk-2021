@@ -9,21 +9,25 @@ using UnityEngine;
 
 public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
 {
-    private const float INITIAL_ATTACK_TIMER_DELAY = 10f;
+    private const float INITIAL_ATTACK_TIMER_DELAY = 0f;
 
     [SerializeField, ReadOnly] private Vector2 input = Vector2.zero;
     [SerializeField] private int health = 100;
     [SerializeField] private int damage = 10;
     [SerializeField] private float attackInterval = 5f;
+    [SerializeField] private float attackSpeed = 1f;
     [SerializeField] private RewardPackage reward = default;
     [SerializeField] private Reward rewardPrefab = default;
 
     [Separator("Attacks", true)]
     [SerializeField] private FireGroundArea fireGround = default;
+    [SerializeField] private GenericProjectile projectileTargetted = default;
+    [SerializeField] private GenericProjectile projectileDirectional = default;
 
     private Vector2? destination = null;
     private IDamageable target = null;
     private IAttack[] attacks = default;
+    private IAttack defaultAttack = default;
 
     private float jumpCooldown = 2f;
     float raycastDistance = 3f;
@@ -34,6 +38,7 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
     private Player player = default;
     private TimerInstance jumpTimer = default;
     private TimerInstance attackTimer = default;
+    private TimerInstance attackingTimer = default;
 
     public IModelController Anim { get; set; }
     public RefValue<int> Damage { get; set; } = new RefValue<int>(() => 1);
@@ -43,19 +48,20 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
     public GameObject DamageDealerObject => gameObject;
 
     private IAttack PreviousAttack { get; set; }
-    private IAttack SelectedAttack { get; set; }   
+    private IAttack SelectedAttack { get; set; }    
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         movement = GetComponent<Movement>();
         healthController = GetComponentInChildren<HealthController>();
-        Anim = GetComponent<IModelController>();
+        Anim = GetComponentInChildren<IModelController>();
         player = FindObjectOfType<Player>();
         target = player.GetComponentInChildren<IDamageable>();
 
         jumpTimer = Timer.CreateEmptyTimer(() => !this, true);
         attackTimer = Timer.CreateTimer(INITIAL_ATTACK_TIMER_DELAY, () => !this, true);
+        attackingTimer = Timer.CreateEmptyTimer(() => !this, true);
 
         Damage = new RefValue<int>(() => damage);
 
@@ -64,23 +70,31 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
         healthController.Fill();
 
         attacks = new IAttack[]
-        {
-            new FireGroundAttack(fireGround, 5f, 1f),
+        {            
+            new FireGroundAttack(fireGround, 7f, 1f),
+            // new ProjectileAttack(Mathf.Infinity, projectileTargetted, 1f),
+            new DirectionalProjectileAttack(Mathf.Infinity, projectileDirectional, 1f),
+            new CircularAOEProjectileAttack(Mathf.Infinity, projectileDirectional, 1f, 16),
         };
-    }
 
+        defaultAttack = new MeleeAttack(2.5f);
+    }
+        
     private void Update()
     {
-        if (healthController.IsDead || target == null) { return; }
+        if (healthController.IsDead || target == null || target.IsDead) { return; }
+
+        if (attackingTimer.IsEnded) { destination = target.DamageableObject.transform.position; }
 
         if (SelectedAttack == null) { PickNextAttack(); }
 
         if (SelectedAttack != null)
-        {
-            SelectedAttack.Attack(this, null);
+        {            
+            SelectedAttack.Attack(this, target);
             PreviousAttack = SelectedAttack;
             SelectedAttack = null;
             input = Vector2.zero;
+            attackingTimer.SetTime(attackSpeed);
         }
         else if (destination.HasValue)
         {
@@ -89,11 +103,13 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
             input.x = Mathf.Clamp(direction.x, -1, 1);
             SetInputY(direction);
 
-            if (Vector2.Distance((Vector2)transform.position, destination.Value) < 0.5f)
+            if (Vector2.Distance((Vector2)transform.position, destination.Value) < defaultAttack.Range)
             {
+                defaultAttack.Attack(this, target);
                 destination = null;
                 rb.velocity = Vector2.zero;
                 input = Vector2.zero;
+                attackingTimer.SetTime(attackSpeed);
             }
         }
         else
@@ -175,6 +191,7 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
 
     private void Die()
     {
+        Anim.PlayAnimation("Death");
         DropScore();
         Destroy(gameObject, 1f);
     }
