@@ -1,4 +1,5 @@
 using Elysium.Combat;
+using Elysium.UI.ProgressBar;
 using Elysium.Utils.Attributes;
 using System;
 using System.Collections;
@@ -95,11 +96,13 @@ public class Player : MonoBehaviour, IPushable
             Color.red, 
             0,
             Ethereal.BASE_TIME_IN_FORM,
+            2f,
             10f, 
-            1f, 
+            5f,
             fireExplosionHit, 
             fireExplosionTick
             );
+        fireHotbar.SetupCooldownBar(fireEffect as IFillable);
 
         waterEffect = new WaterEffect(
             this,
@@ -108,9 +111,11 @@ public class Player : MonoBehaviour, IPushable
             Color.blue,
             1,
             Ethereal.BASE_TIME_IN_FORM,
+            5f,
             heal,
             healEffectTick
             );
+        waterHotbar.SetupCooldownBar(waterEffect as IFillable);
 
         windEffect = new WindEffect(
             this, 
@@ -119,19 +124,23 @@ public class Player : MonoBehaviour, IPushable
             Color.gray, 
             2,
             Ethereal.BASE_TIME_IN_FORM,
+            7f,
             0f, 
             7f,
             36000f
             );
-        
+        windHotbar.SetupCooldownBar(windEffect as IFillable);
+
         vineEffect = new VineEffect(
             this, 
             ethereal, 
             Color.green, 
             Color.green, 
             3,
-            Ethereal.BASE_TIME_IN_FORM
+            Ethereal.BASE_TIME_IN_FORM,
+            4f
             );
+        vineHotbar.SetupCooldownBar(vineEffect as IFillable);
 
         earthEffect = new EarthEffect(
             this,
@@ -139,8 +148,10 @@ public class Player : MonoBehaviour, IPushable
             new Color32(117, 59, 11, 100),
             new Color32(117, 59, 11, 255),
             4,
-            Ethereal.BASE_TIME_IN_FORM
+            Ethereal.BASE_TIME_IN_FORM,
+            4f
             );
+        earthHotbar.SetupCooldownBar(earthEffect as IFillable);
 
         healthController.MaxResource = new Elysium.Utils.RefValue<int>(() => health);
         healthController.Fill();
@@ -164,7 +175,7 @@ public class Player : MonoBehaviour, IPushable
         }
 
         // Different Spirits
-        if (!ethereal.IsActive && Input.GetKeyDown(KeyCode.Alpha1))
+        if (!ethereal.IsActive && fireEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha1))
         { 
             selectedEffect = fireEffect;
             DeactivateAllHotbars();
@@ -172,7 +183,7 @@ public class Player : MonoBehaviour, IPushable
             isAiming = true;
         }
 
-        if (!ethereal.IsActive && Input.GetKeyDown(KeyCode.Alpha2)) 
+        if (!ethereal.IsActive && waterEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha2)) 
         { 
             selectedEffect = waterEffect;
             DeactivateAllHotbars();
@@ -180,7 +191,7 @@ public class Player : MonoBehaviour, IPushable
             isAiming = true;
         }
 
-        if (!ethereal.IsActive && Input.GetKeyDown(KeyCode.Alpha3))
+        if (!ethereal.IsActive && windEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha3))
         { 
             selectedEffect = windEffect;
             DeactivateAllHotbars();
@@ -188,7 +199,7 @@ public class Player : MonoBehaviour, IPushable
             isAiming = true;
         }
 
-        if (!ethereal.IsActive && Input.GetKeyDown(KeyCode.Alpha4)) 
+        if (!ethereal.IsActive && vineEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha4)) 
         { 
             selectedEffect = vineEffect;
             DeactivateAllHotbars();
@@ -196,7 +207,7 @@ public class Player : MonoBehaviour, IPushable
             isAiming = true;
         }
 
-        if (!ethereal.IsActive && Input.GetKeyDown(KeyCode.Alpha5))
+        if (!ethereal.IsActive && earthEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha5))
         {
             selectedEffect = earthEffect;
             DeactivateAllHotbars();

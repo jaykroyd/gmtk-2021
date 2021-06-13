@@ -1,6 +1,7 @@
 using Elysium.Combat;
 using Elysium.Utils;
 using Elysium.Utils.Attributes;
+using Elysium.Utils.Timers;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,21 +12,30 @@ public class AI : MonoBehaviour, IPushable, IDamageDealer
     [SerializeField] private int health = 100;
     [SerializeField] private int damage = 10;
     [SerializeField] private float wanderCooldown = 2f;
+    [SerializeField] private float aggroRange = 8f;
+    [SerializeField] private float maxAggroRange = 10f;
     [SerializeField] private Transform patrolA, patrolB = default;
 
     private Vector2? destination = null;
+    private IDamageable target = null;
+
     private float wanderTimer = 0f;
+    private float jumpCooldown = 2f;
+    float raycastDistance = 3f;
 
     private Movement movement = default;
     private Rigidbody2D rb = default;
     private HealthController healthController = default;
+    private Player player = default;
+    private TimerInstance jumpTimer = default;
 
     public ModelController Anim { get; set; }
     public RefValue<int> Damage { get; set; } = new RefValue<int>(() => 1);
 
     public DamageTeam[] DealsDamageToTeams => new DamageTeam[]{ DamageTeam.PLAYER };
-
     public GameObject DamageDealerObject => gameObject;
+
+    private IAttack attack = default;    
 
     private void Awake()
     {
@@ -33,45 +43,133 @@ public class AI : MonoBehaviour, IPushable, IDamageDealer
         movement = GetComponent<Movement>();
         healthController = GetComponent<HealthController>();
         Anim = GetComponent<ModelController>();
+        player = FindObjectOfType<Player>();
 
         wanderTimer = wanderCooldown;
+        jumpTimer = Timer.CreateEmptyTimer(() => !this, true);
 
         Damage = new RefValue<int>(() => damage);
 
-        healthController.MaxResource = new Elysium.Utils.RefValue<int>(() => health);
+        healthController.MaxResource = new RefValue<int>(() => health);
         healthController.OnDeath += Die;
         healthController.Fill();
+
+        attack = new MeleeAttack();
     }
 
     private void Update()
     {
         if (healthController.IsDead) { return; }
 
-        if (destination.HasValue)
+        if (target == null && EnemyIsInRange(out IDamageable _enemy))
         {
+            target = _enemy;
+        }
+
+        if (target != null)
+        {
+            if (target.IsDead || target.DamageableObject == null)
+            {
+                target = null;
+                input = Vector2.zero;
+            }
+            else
+            {
+                var tTransform = target.DamageableObject.transform;
+
+                // Set Inputs
+                Vector2 direction = (Vector2)tTransform.position - (Vector2)transform.position;
+                input.x = Mathf.Clamp(direction.x, -1, 1);
+                SetInputY(direction);                
+
+                if (Vector2.Distance((Vector2)transform.position, (Vector2)tTransform.position) < attack.Range)
+                {
+                    attack.Attack(this, target);
+                    rb.velocity = Vector2.zero;
+                    input = Vector2.zero;
+                }
+                else if (Vector2.Distance((Vector2)transform.position, (Vector2)tTransform.position) > maxAggroRange)
+                {
+                    target = null;
+                    rb.velocity = Vector2.zero;
+                    input = Vector2.zero;
+                }
+            }            
+        }
+        else if (destination.HasValue)
+        {
+            // Set Inputs
             Vector2 direction = destination.Value - (Vector2)transform.position;
             input.x = Mathf.Clamp(direction.x, -1, 1);
-            input.y = Mathf.Clamp(direction.y, 0, 1);
+            SetInputY(direction);
 
             if (Vector2.Distance((Vector2)transform.position, destination.Value) < 0.5f)
             {
                 destination = null;
-                rb.velocity = Vector2.zero;                
-                return;
+                rb.velocity = Vector2.zero;
+                input = Vector2.zero;
             }
         }
-        else
+        else 
         {
-            input = Vector2.zero;
-            wanderTimer -= Time.deltaTime;
-            if (wanderTimer <= 0)
-            {
-                destination = RandomPatrolPoint();
-                wanderTimer = wanderCooldown;
-            }            
+            WaitAndAcquireNewPatrolPosition(); 
         }
 
         MoveBasedOnInput();
+    }
+
+    private void SetInputY(Vector2 _direction)
+    {
+        if (jumpTimer.IsEnded)
+        {
+            Debug.DrawRay(transform.position, new Vector2(_direction.x, 0).normalized * raycastDistance, Color.red);
+            RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, new Vector2(_direction.x, 0).normalized, raycastDistance);
+            if (hits.Length > 0)
+            {
+                foreach (var hit in hits)
+                {
+                    if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Ground"))
+                    {
+                        Debug.Log("collider is ground");
+                        jumpTimer.SetTime(jumpCooldown);
+                        input.y = 1;
+                        return;
+                    }
+                }                
+            }
+            
+            if (_direction.y >= 1)
+            {
+                jumpTimer.SetTime(jumpCooldown);
+                input.y = Mathf.Clamp(_direction.y, 0, 1);
+                return;
+            }
+        }
+
+        input.y = 0;
+    }
+
+    private bool EnemyIsInRange(out IDamageable _damageable)
+    {        
+        if (Vector2.Distance(player.transform.position, transform.position) < aggroRange)
+        {
+            _damageable = player.GetComponent<IDamageable>();
+            return true;
+        }
+
+        _damageable = null;
+        return false;
+    }
+
+    private void WaitAndAcquireNewPatrolPosition()
+    {
+        input = Vector2.zero;
+        wanderTimer -= Time.deltaTime;
+        if (wanderTimer <= 0)
+        {
+            destination = RandomPatrolPoint();
+            wanderTimer = wanderCooldown;
+        }
     }
 
     private void MoveBasedOnInput()

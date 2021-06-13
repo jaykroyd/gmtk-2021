@@ -1,10 +1,11 @@
+using Elysium.UI.ProgressBar;
 using Elysium.Utils.Timers;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public abstract class BaseEffect : IEtherealEffect
+public abstract class BaseEffect : IEtherealEffect, IFillable
 {
     protected Ethereal ethereal = default;
     protected Player controller = default;
@@ -12,15 +13,19 @@ public abstract class BaseEffect : IEtherealEffect
     protected Color mainColor = default;
     protected Color linkColor = default;
 
-    protected TimerInstance timer = default;    
+    protected TimerInstance timer = default;
+    protected TimerInstance cooldownTimer = default;
 
     protected int modelIndex = default;
 
-    public event UnityAction OnShootEnd;
-
     protected virtual float maxDurationInSpiritForm { get; set; } = 5f;
 
-    public BaseEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, int _modelIndex, float _timeInForm)
+    public float Current { get; set; }
+    public float Max { get; set; }
+
+    public event UnityAction OnFillValueChanged;
+
+    public BaseEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, int _modelIndex, float _timeInForm, float _cooldown)
     {
         controller = _controller;
         ethereal = _ethereal;
@@ -28,16 +33,41 @@ public abstract class BaseEffect : IEtherealEffect
         this.linkColor = _linkColor;
         this.modelIndex = _modelIndex;
         this.maxDurationInSpiritForm = _timeInForm;
+        this.Max = _cooldown;
+        Current = 0;
+
+        cooldownTimer = Timer.CreateEmptyTimer(() => !ethereal, true);
+        OnFillValueChanged?.Invoke();
+
+        cooldownTimer.OnTick += () =>
+        {
+            Current = cooldownTimer.Time;
+            OnFillValueChanged?.Invoke();
+        };
+        cooldownTimer.OnEnd += () =>
+        {
+            Current = 0;
+            OnFillValueChanged?.Invoke();
+        };
     }
+
+    public bool IsAvailable => cooldownTimer.IsEnded;
 
     public virtual void OnActivate()
     {
+        if (!IsAvailable)
+        {
+            Debug.LogError("started unavailable skill!");
+        }
+
+        cooldownTimer.SetTime(Max);
         ethereal.SetModel(modelIndex);
         ethereal.Link.SetColor(linkColor);
         controller.SetParticles(modelIndex);
         timer = Timer.CreateTimer(maxDurationInSpiritForm, () => !ethereal, false);
         timer.OnEnd += RetrieveStart;
     }
+
     public virtual void OnDeactivate()
     {
         controller.SetParticles(-1);
@@ -118,5 +148,10 @@ public abstract class BaseEffect : IEtherealEffect
 
         ethereal.OnPlayerArrival += RetrieveFinish;
         ethereal.OnPlayerArrival += DeactivateOnArrival;        
+    }
+
+    public void TriggerOnFillValueChanged()
+    {
+        OnFillValueChanged?.Invoke();
     }
 }

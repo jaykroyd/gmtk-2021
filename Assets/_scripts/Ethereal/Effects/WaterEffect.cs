@@ -14,7 +14,7 @@ public class WaterEffect : BaseEffect, IDamageDealer
     public DamageTeam[] DealsDamageToTeams => new DamageTeam[] { DamageTeam.ENEMY };
     public GameObject DamageDealerObject => controller.gameObject;
 
-    public WaterEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, int _modelIndex, float _timeInForm, float _healingTickMultiplier, GameObject _healEffectTick) : base(_controller, _ethereal, _mainColor, _linkColor, _modelIndex, _timeInForm)
+    public WaterEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, int _modelIndex, float _timeInForm, float _cooldown, float _healingTickMultiplier, GameObject _healEffectTick) : base(_controller, _ethereal, _mainColor, _linkColor, _modelIndex, _timeInForm, _cooldown)
     {
         this.healingTickMultiplier = _healingTickMultiplier;
         this.healEffectTick = _healEffectTick;

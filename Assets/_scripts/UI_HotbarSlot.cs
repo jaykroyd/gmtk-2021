@@ -1,6 +1,9 @@
+using Elysium.UI.ProgressBar;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class UI_HotbarSlot : MonoBehaviour
@@ -12,7 +15,12 @@ public class UI_HotbarSlot : MonoBehaviour
 
     private void Awake()
     {
-        defaultColor = highlight.color;
+        defaultColor = highlight.color;        
+    }
+
+    public void SetupCooldownBar(IFillable _fillable)
+    {
+        GetComponent<ProgressBarFillableValue>().SetRuntimeData(_fillable);
     }
 
     public void Highlight(bool _active)

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public interface IEtherealEffect
 {
+    bool IsAvailable { get; }
+
     void DeployStart();
     void DeployFinish();
     void RetrieveStart();

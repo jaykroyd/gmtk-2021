@@ -12,7 +12,7 @@ public class VineEffect : BaseEffect
 
     Rigidbody2D rb;
 
-    public VineEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, int _modelIndex, float _timeInForm) : base(_controller, _ethereal, _mainColor, _linkColor, _modelIndex, _timeInForm)
+    public VineEffect(Player _controller, Ethereal _ethereal, Color _mainColor, Color _linkColor, int _modelIndex, float _timeInForm, float _cooldown) : base(_controller, _ethereal, _mainColor, _linkColor, _modelIndex, _timeInForm, _cooldown)
     {
         rb = _controller.GetComponent<Rigidbody2D>();
     }
