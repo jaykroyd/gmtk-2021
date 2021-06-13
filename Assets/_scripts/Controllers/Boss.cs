@@ -6,10 +6,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
 {
-    private const float INITIAL_ATTACK_TIMER_DELAY = 0f;
+    private const float INITIAL_ATTACK_TIMER_DELAY = 2f;
 
     [SerializeField, ReadOnly] private Vector2 input = Vector2.zero;
     [SerializeField] private int health = 100;
@@ -18,10 +19,11 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
     [SerializeField] private float attackSpeed = 1f;
     [SerializeField] private RewardPackage reward = default;
     [SerializeField] private Reward rewardPrefab = default;
+    [SerializeField] private GameObject win = default;
 
     [Separator("Attacks", true)]
     [SerializeField] private FireGroundArea fireGround = default;
-    [SerializeField] private GenericProjectile projectileTargetted = default;
+    [SerializeField] private GameObject poofEffect = default;
     [SerializeField] private GenericProjectile projectileDirectional = default;
 
     private Vector2? destination = null;
@@ -69,10 +71,12 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
         healthController.OnDeath += Die;
         healthController.Fill();
 
+        win.SetActive(false);
+
         attacks = new IAttack[]
-        {            
+        {
             new FireGroundAttack(fireGround, 7f, 1f),
-            // new ProjectileAttack(Mathf.Infinity, projectileTargetted, 1f),
+            new TeleportToBackAttack(Mathf.Infinity, poofEffect),
             new DirectionalProjectileAttack(Mathf.Infinity, projectileDirectional, 1f),
             new CircularAOEProjectileAttack(Mathf.Infinity, projectileDirectional, 1f, 16),
         };
@@ -193,7 +197,20 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
     {
         Anim.PlayAnimation("Death");
         DropScore();
-        Destroy(gameObject, 1f);
+        Tools.Invoke(this, () => gameObject.SetActive(false), 1f);
+
+        var t = Timer.CreateTimer(4f, () => false, false);
+        t.OnEnd += Win;
+    }
+
+    private void Win()
+    {
+        win.SetActive(true);
+    }
+
+    public void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     private void DropScore()
