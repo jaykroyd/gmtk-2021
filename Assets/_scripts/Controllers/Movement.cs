@@ -31,8 +31,12 @@ public class Movement : MonoBehaviour
 		set => m_MovementSpeed = value;
     }
 
-	public bool IsGrounded => m_Grounded;
 	public LayerMask WhatIsGround => m_WhatIsGround;
+	public bool IsGrounded 
+	{ 
+		get => m_Grounded; 
+		set => m_Grounded = value; 
+	}
 
 	public bool AirControl { get => m_AirControl; set => m_AirControl = value; }
 
