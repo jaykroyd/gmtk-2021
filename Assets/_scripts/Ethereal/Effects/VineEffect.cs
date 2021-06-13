@@ -27,7 +27,7 @@ public class VineEffect : BaseEffect
         {
             float excess = DistanceToEthereal - VineLength;
             float force = ForceMultiplier * Mathf.Exp(excess);
-            Debug.Log("Moving too far from vine!"+force.ToString());
+            Debug.Log("Moving too far from vine!");
             rb.AddForce(GetVineDirection * force * Time.deltaTime);
         }
 

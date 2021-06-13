@@ -133,7 +133,7 @@ public class Player : MonoBehaviour, IPushable
             2,
             Ethereal.BASE_TIME_IN_FORM,
             7f,
-            0f, 
+            -2f, 
             7f,
             36000f
             );
@@ -229,7 +229,7 @@ public class Player : MonoBehaviour, IPushable
         Vector2 direction = Destination.Value - (Vector2)transform.position;
         movement.Move(direction.normalized);
 
-        if (Vector2.Distance((Vector2)transform.position, Destination.Value) < 0.5f)
+        if (Vector2.Distance((Vector2)transform.position, Destination.Value) < 1.5f)
         {
             Destination = null;
             rb.velocity = Vector2.zero;

@@ -61,7 +61,7 @@ public class WaterEffect : BaseEffect, IDamageDealer
 
     public override void RetrieveStart()
     {
-        GoTo();
+        Pull();
     }
 
     public override void RetrieveFinish()
