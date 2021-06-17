@@ -43,6 +43,10 @@ public class Spikes : MonoBehaviour, IDamageDealer
             var dmg = TargetsInCollider[i];
             Debug.LogError($"dealing damage from spikes to {dmg.DamageableObject.name}");
             dmg.TakeDamage(this, Damage.Value, "Spike");
+            if (dmg.IsDead)
+            {
+                TargetsInCollider.Remove(dmg);
+            }
         }
     }
 

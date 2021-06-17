@@ -11,7 +11,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
-public class Player : MonoBehaviour, IPushable
+public class Player : MonoBehaviour, IPushable, IPlayer
 {
     [SerializeField, ReadOnly] private Vector2 input = Vector2.zero;
     [SerializeField] private int health = 100;
@@ -27,12 +27,11 @@ public class Player : MonoBehaviour, IPushable
     private Canvas canvas = default;
     private Movement movement = default;
     private Rigidbody2D rb = default;
-    private Collider collider = default;
+    private Collider[] colliders = default;
     private HealthController healthController = default;
     private Boss boss = default;
     private SpriteRenderer renderer = default;
 
-    bool isAiming = false;   
     public bool airJump = false; 
 
     private IEtherealEffect fireEffect = null;
@@ -74,6 +73,7 @@ public class Player : MonoBehaviour, IPushable
     public Movement Movement => movement;
     public HealthController HealthController => healthController;
     public Vector2? Destination { get; set; }    
+    public Vector2 Checkpoint { get; set; }
 
     public void Push(float _force, Vector2 _direction)
     {
@@ -93,6 +93,11 @@ public class Player : MonoBehaviour, IPushable
     public void ActivateCollisions(bool _active)
     {
         gameObject.layer = _active ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("Intangible");
+        foreach (Transform t in transform)
+        {
+            t.gameObject.layer = _active ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("Intangible");
+        }            
+
         var c = renderer.color;
         c.a = _active ? 1f : 0.3f;
         renderer.color = c;
@@ -101,43 +106,7 @@ public class Player : MonoBehaviour, IPushable
     public void ReceiveReward(RewardPackage _reward)
     {
         playerScore.Value += _reward.Score;
-    }
-
-    private void Awake()
-    {
-        rb = GetComponent<Rigidbody2D>();
-        canvas = FindObjectOfType<Canvas>();
-        movement = GetComponent<Movement>();
-        collider = GetComponentInChildren<Collider>();
-        healthController = GetComponent<HealthController>();
-        Anim = GetComponentInChildren<ModelController>();
-        boss = FindObjectOfType<Boss>();
-        renderer = GetComponentInChildren<SpriteRenderer>();
-
-        healthController.MaxResource = new Elysium.Utils.RefValue<int>(() => health);
-        healthController.Fill();
-        healthController.OnDeath += Die;
-
-        firesoulpopup.gameObject.SetActive(false);
-        watersoulpopup.gameObject.SetActive(false);
-        earthsoulpopup.gameObject.SetActive(false);
-        windsoulpopup.gameObject.SetActive(false);
-        vinesoulpopup.gameObject.SetActive(false);
-    }
-
-    private void Die()
-    {
-        Instantiate(deathAnim, transform.position, deathAnim.transform.rotation);
-
-        var dt = Timer.CreateTimer(1f, () => !this, false);
-        dt.OnEnd += () =>
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        };
-
-        playerScore.Value = 0;
-        gameObject.SetActive(false);
-    }
+    }    
 
     public void CreateEarthEffect()
     {
@@ -152,6 +121,7 @@ public class Player : MonoBehaviour, IPushable
                     );
         earthHotbar.SetupCooldownBar(earthEffect as IFillable);
         earthsoulpopup.SetActive(true);
+        Checkpoint = transform.position;
     }
 
     public void CreateVineEffect()
@@ -167,6 +137,7 @@ public class Player : MonoBehaviour, IPushable
                     );
         vineHotbar.SetupCooldownBar(vineEffect as IFillable);
         vinesoulpopup.SetActive(true);
+        Checkpoint = transform.position;
     }
 
     public void CreateWindEffect()
@@ -185,6 +156,7 @@ public class Player : MonoBehaviour, IPushable
                     );
         windHotbar.SetupCooldownBar(windEffect as IFillable);
         windsoulpopup.SetActive(true);
+        Checkpoint = transform.position;
     }
 
     public void CreateWaterEffect()
@@ -202,6 +174,7 @@ public class Player : MonoBehaviour, IPushable
                     );
         waterHotbar.SetupCooldownBar(waterEffect as IFillable);
         watersoulpopup.SetActive(true);
+        Checkpoint = transform.position;
     }
 
     public void CreateFireEffect()
@@ -221,8 +194,33 @@ public class Player : MonoBehaviour, IPushable
                     );
         fireHotbar.SetupCooldownBar(fireEffect as IFillable);
         firesoulpopup.SetActive(true);
+        Checkpoint = transform.position;
     }
 
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        canvas = FindObjectOfType<Canvas>();
+        movement = GetComponent<Movement>();
+        colliders = GetComponentsInChildren<Collider>();
+        healthController = GetComponent<HealthController>();
+        Anim = GetComponentInChildren<ModelController>();
+        boss = FindObjectOfType<Boss>();
+        renderer = GetComponentInChildren<SpriteRenderer>();
+
+        healthController.MaxResource = new Elysium.Utils.RefValue<int>(() => health);
+        healthController.Fill();
+        healthController.OnDeath += Die;
+
+        firesoulpopup.gameObject.SetActive(false);
+        watersoulpopup.gameObject.SetActive(false);
+        earthsoulpopup.gameObject.SetActive(false);
+        windsoulpopup.gameObject.SetActive(false);
+        vinesoulpopup.gameObject.SetActive(false);
+
+        Checkpoint = transform.position;
+    }
+    
     protected virtual void Start()
     {
         ethereal.gameObject.SetActive(false);
@@ -230,16 +228,22 @@ public class Player : MonoBehaviour, IPushable
 
     protected virtual void Update()
     {
-        if (boss != null) { bossBar.gameObject.SetActive(Vector2.Distance(transform.position, boss.transform.position) < 20f); }        
+        if (boss != null) { bossBar.gameObject.SetActive(Vector2.Distance(transform.position, boss.transform.position) < boss.EngageRange); }
 
         if (Destination.HasValue) { AutomaticallyMoveToDestination(); }
         else { MoveBasedOnInput(); }
 
-        DrawChangeStateUI(isAiming);
+        DrawChangeStateUI(!ethereal.IsActive);
         if (selectedEffect != null && Input.GetMouseButtonDown(0)) 
         {
-            if (isAiming) { DeployEthereal(); }
+            if (!ethereal.IsActive && selectedEffect.IsAvailable) { DeployEthereal(); }
             else if (ethereal.IsDeployed) { RetrieveEthereal(); }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            selectedEffect = null;
+            DeactivateAllHotbars();
         }
 
         // Different Spirits
@@ -248,7 +252,6 @@ public class Player : MonoBehaviour, IPushable
             selectedEffect = fireEffect;
             DeactivateAllHotbars();
             fireHotbar.Highlight(true);
-            isAiming = true;
         }
 
         if (vineEffect != null && !ethereal.IsActive && vineEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha2)) 
@@ -256,7 +259,6 @@ public class Player : MonoBehaviour, IPushable
             selectedEffect = vineEffect;
             DeactivateAllHotbars();
             vineHotbar.Highlight(true);
-            isAiming = true;
         }
 
         if (earthEffect != null && !ethereal.IsActive && earthEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha3))
@@ -264,7 +266,6 @@ public class Player : MonoBehaviour, IPushable
             selectedEffect = earthEffect;
             DeactivateAllHotbars();
             earthHotbar.Highlight(true);
-            isAiming = true;
         }
 
         if (waterEffect != null && !ethereal.IsActive && waterEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha4)) 
@@ -272,7 +273,6 @@ public class Player : MonoBehaviour, IPushable
             selectedEffect = waterEffect;
             DeactivateAllHotbars();
             waterHotbar.Highlight(true);
-            isAiming = true;
         }
 
         if (windEffect != null && !ethereal.IsActive && windEffect.IsAvailable && Input.GetKeyDown(KeyCode.Alpha5))
@@ -280,10 +280,7 @@ public class Player : MonoBehaviour, IPushable
             selectedEffect = windEffect;
             DeactivateAllHotbars();
             windHotbar.Highlight(true);
-            isAiming = true;
         }
-
-
     }
 
     private void AutomaticallyMoveToDestination()
@@ -333,13 +330,38 @@ public class Player : MonoBehaviour, IPushable
     private void DeployEthereal()
     {
         ethereal.Deploy(this, selectedEffect);
-        isAiming = false;
-        DeactivateAllHotbars();
     }
 
     private void RetrieveEthereal()
     {
         ethereal.Retrieve(this);
+    }
+
+    private void Die()
+    {
+        ethereal.ForceRetrieve(this);
+        selectedEffect = null;
+        DeactivateAllHotbars();
+
+        Instantiate(deathAnim, transform.position, deathAnim.transform.rotation);
+
+        var dt = Timer.CreateTimer(1f, () => !this, false);
+        dt.OnEnd += () =>
+        {
+            RespawnAtCheckpoint();
+        };
+                
+        gameObject.SetActive(false);
+    }
+
+    private void RespawnAtCheckpoint()
+    {
+        transform.position = Checkpoint;
+        healthController.Fill();
+        healthController.Ressurect();
+
+        boss.FullReset();
+        gameObject.SetActive(true);
     }
 
     private void DrawChangeStateUI(bool _active)

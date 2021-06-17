@@ -19,7 +19,7 @@ public class Chest : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D _collision)
     {
-        if (_collision.collider.TryGetComponent(out Player _player))
+        if (_collision.collider.TryGetComponent(out IPlayer _player))
         {
             Reward.Create(rewardPrefab, transform.position, reward, spawnRadius);
             Destroy(gameObject);

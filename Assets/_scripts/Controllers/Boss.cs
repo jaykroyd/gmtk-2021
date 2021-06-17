@@ -25,17 +25,18 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
     [SerializeField] private LongValueSO playerScore = default;
 
     [Separator("Attacks", true)]
-    [SerializeField] private FireGroundArea fireGround = default;
+    [SerializeField] private FireGroundArea[] fireGround = default;
     [SerializeField] private GameObject poofEffect = default;
     [SerializeField] private GenericProjectile projectileDirectional = default;
 
     private Vector2? destination = null;
     private IDamageable target = null;
+    private Vector2 origin = default;
     private IAttack[] attacks = default;
     private IAttack defaultAttack = default;
 
     private float jumpCooldown = 2f;
-    float raycastDistance = 3f;
+    private float raycastDistance = 3f;
 
     private Movement movement = default;
     private Rigidbody2D rb = default;
@@ -51,6 +52,7 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
 
     public DamageTeam[] DealsDamageToTeams => new DamageTeam[] { DamageTeam.PLAYER };
     public GameObject DamageDealerObject => gameObject;
+    public float EngageRange => engageRange;
 
     private IAttack PreviousAttack { get; set; }
     private IAttack SelectedAttack { get; set; }    
@@ -80,11 +82,12 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
         {
             new FireGroundAttack(fireGround, 7f, 1f),
             new TeleportToBackAttack(Mathf.Infinity, poofEffect),
-            new DirectionalProjectileAttack(Mathf.Infinity, projectileDirectional, 1f),
-            new CircularAOEProjectileAttack(Mathf.Infinity, projectileDirectional, 1f, 16),
+            new DirectionalProjectileAttack(Mathf.Infinity, projectileDirectional, 3f),
+            new CircularAOEProjectileAttack(Mathf.Infinity, projectileDirectional, 3f, 16),
         };
 
         defaultAttack = new MeleeAttack(2.5f);
+        origin = transform.position;
     }
         
     private void Update()
@@ -236,5 +239,11 @@ public class Boss : MonoBehaviour, IPushable, IDamageDealer, IAttacker
     {
         Gizmos.color = Color.black;
         Gizmos.DrawWireSphere(transform.position, engageRange);
+    }
+
+    public void FullReset()
+    {
+        healthController.Fill();
+        transform.position = origin;
     }
 }

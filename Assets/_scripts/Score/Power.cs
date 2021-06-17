@@ -43,7 +43,7 @@ public class Power : MonoBehaviour
 
     private void TryCollect(Collision2D _collision)
     {
-        if (_collision.collider.TryGetComponent(out Player _player))
+        if (_collision.collider.TryGetComponent(out IPlayer _player))
         {
             if (spirit == SpiritType.Fire) { _player.CreateFireEffect(); }
             if (spirit == SpiritType.Water) { _player.CreateWaterEffect(); }

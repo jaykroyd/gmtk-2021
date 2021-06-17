@@ -62,9 +62,15 @@ public class FireGroundArea : MonoBehaviour
     {
         if (caster == null) { return; }
 
-        foreach (var col in CollidersInArea)
+        for (int i = 0; i < CollidersInArea.Count; i++)
         {
-            var damageable = col.GetComponentInChildren<IDamageable>();
+            if (CollidersInArea[i] == null || !CollidersInArea[i]) 
+            {
+                CollidersInArea[i] = null;
+                return; 
+            }
+
+            var damageable = CollidersInArea[i].GetComponentInChildren<IDamageable>();
             if (damageable != null)
             {
                 if (!caster.DealsDamageToTeams.Contains(damageable.Team)) { continue; }
@@ -72,5 +78,7 @@ public class FireGroundArea : MonoBehaviour
                 GameObject.Instantiate(explosion, damageable.DamageableObject.transform);
             }
         }
+
+        CollidersInArea = CollidersInArea.Where(x => x != null).ToList();
     }
 }

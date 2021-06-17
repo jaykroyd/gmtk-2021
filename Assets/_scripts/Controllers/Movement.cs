@@ -22,7 +22,8 @@ public class Movement : MonoBehaviour
 	private Rigidbody2D m_Rigidbody2D;
 	private bool m_FacingRight = true;  // For determining which way the player is currently facing.
 	private Vector3 m_Velocity = Vector3.zero;
-		
+	private float gravityScale = default;	
+
 	public UnityEvent OnLandEvent;
 
 	public float MoveSpeed
@@ -46,6 +47,7 @@ public class Movement : MonoBehaviour
 	private void Awake()
 	{
 		m_Rigidbody2D = GetComponentInParent<Rigidbody2D>();
+		gravityScale = m_Rigidbody2D.gravityScale;
 
 		if (OnLandEvent == null) { OnLandEvent = new UnityEvent(); }			
 	}
@@ -85,6 +87,8 @@ public class Movement : MonoBehaviour
 		{
 			Flip();
 		}
+
+		if (_direction == Vector2.zero) { m_Rigidbody2D.velocity = Vector2.zero; }
 	}
 
 	public void Move(float move, bool jump)

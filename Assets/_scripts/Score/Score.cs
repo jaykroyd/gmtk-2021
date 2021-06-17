@@ -32,7 +32,7 @@ public class Score : MonoBehaviour
 
     private void TryCollect(Collision2D _collision)
     {
-        if (_collision.collider.TryGetComponent(out Player _player))
+        if (_collision.collider.TryGetComponent(out IPlayer _player))
         {
             _player.ReceiveReward(new RewardPackage
             {
